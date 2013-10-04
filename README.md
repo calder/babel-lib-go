@@ -1,4 +1,2 @@
-babel-go
-========
-
-Go Vita encoding library
+Babel for Go
+============
