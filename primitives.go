@@ -60,17 +60,14 @@ func (obj *MsgObj) String () string {
 }
 
 func DecodeMsg (obj *RawObj, recursive bool, dec *Decoder) Obj {
-    toLen := int(obj.Dat.To(8).Byte())
-    to    := dec.decode(obj.Dat.FromTo(8,toLen), recursive)
-    dat   := dec.decode(obj.Dat.From(toLen+8), recursive)
+    c := obj.Dat.Chunks(2)
+    to  := dec.decode(c[0], recursive)
+    dat := dec.decode(c[1], recursive)
     return &MsgObj{to,dat}
 }
 
 func (obj *MsgObj) Encode () *fiddle.Bits {
-    to    := obj.To.Encode()
-    dat   := obj.Dat.Encode()
-    toLen := to.Len()
-    return MSG.Plus(fiddle.FromByte(byte(toLen))).Plus(to).Plus(dat)
+    return MSG.Plus(fiddle.FromChunks(obj.To.Encode(), obj.Dat.Encode()))
 }
 
 /*********************

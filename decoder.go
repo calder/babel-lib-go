@@ -42,7 +42,7 @@ func (dec *Decoder) AddType (typ *fiddle.Bits, decoder DecoderFunc) {
 }
 
 func (dec *Decoder) decode (bits *fiddle.Bits, recursive bool) Obj {
-    if bits.Len() < 64 { panic(errors.New("Decoding error: invalid type signature")) }
+    if bits.Len() < 64 { panic(errors.New("Decoding error: missing type signature")) }
     typ := bits.To(64).Hex()
     obj := DecodeRaw(bits)
     return dec.fns[typ](obj, recursive, dec)
