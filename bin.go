@@ -3,31 +3,31 @@ package babel
 import "github.com/calder/fiddle"
 
 /**************
-***   Obj   ***
+***   Bin   ***
 **************/
 
-type Obj interface {
+type Bin interface {
     Encode () *fiddle.Bits
     String () string
 }
 
 /*****************
-***   RawObj   ***
+***   RawBin   ***
 *****************/
 
-type RawObj struct {
+type RawBin struct {
     Typ *fiddle.Bits
     Dat *fiddle.Bits
 }
 
-func (bin *RawObj) String () string {
+func (bin *RawBin) String () string {
     return "<"+bin.Typ.Hex()+":"+bin.Dat.Hex()+">"
 }
 
-func DecodeRaw (bits *fiddle.Bits) *RawObj {
-    return &RawObj{bits.To(64), bits.From(64)}
+func DecodeRaw (bits *fiddle.Bits) *RawBin {
+    return &RawBin{bits.To(64), bits.From(64)}
 }
 
-func (bin *RawObj) Encode () *fiddle.Bits {
+func (bin *RawBin) Encode () *fiddle.Bits {
     return bin.Typ.Plus(bin.Dat)
 }

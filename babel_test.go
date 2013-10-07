@@ -15,8 +15,8 @@ func randType () *fiddle.Bits {
 func TestDecoder (T *testing.T) {
     for i := 0; i < 1000; i++ {
         dec  := NewDecoder()
-        obj  := &IdObj{randId()}
-        obj2 := dec.Decode(obj.Encode()).(*IdObj)
-        if !obj2.Dat.Equal(obj.Dat) { T.FailNow() }
+        bin  := &IdBin{randId()}
+        bin2 := dec.Decode(bin.Encode()).(*IdBin)
+        if !bin2.Dat.Equal(bin.Dat) { T.FailNow() }
     }
 }

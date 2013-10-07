@@ -3,113 +3,113 @@ package babel
 import "github.com/calder/fiddle"
 
 /*****************
-***   NilObj   ***
+***   NilBin   ***
 *****************/
 
 var NIL = fiddle.FromHex("0000000000000000")
 
-type NilObj struct {}
+type NilBin struct {}
 
-func (obj *NilObj) String () string {
+func (bin *NilBin) String () string {
     return "<Nil>"
 }
 
-func DecodeNil (obj *RawObj, recursive bool, dec *Decoder) Obj {
-    return &NilObj{}
+func DecodeNil (bin *RawBin, recursive bool, dec *Decoder) Bin {
+    return &NilBin{}
 }
 
-func (obj *NilObj) Encode () *fiddle.Bits {
+func (bin *NilBin) Encode () *fiddle.Bits {
     return NIL
 }
 
 /****************
-***   IdObj   ***
+***   IdBin   ***
 ****************/
 
 var ID = fiddle.FromHex("823f70579c7a29bf")
 
-type IdObj struct {
+type IdBin struct {
     Dat *fiddle.Bits
 }
 
-func (obj *IdObj) String () string {
-    return "<Id:"+obj.Dat.Hex()+">"
+func (bin *IdBin) String () string {
+    return "<Id:"+bin.Dat.Hex()+">"
 }
 
-func DecodeId (obj *RawObj, recursive bool, dec *Decoder) Obj {
-    return &IdObj{obj.Dat}
+func DecodeId (bin *RawBin, recursive bool, dec *Decoder) Bin {
+    return &IdBin{bin.Dat}
 }
 
-func (obj *IdObj) Encode () *fiddle.Bits {
-    return ID.Plus(obj.Dat)
+func (bin *IdBin) Encode () *fiddle.Bits {
+    return ID.Plus(bin.Dat)
 }
 
 /*****************
-***   MsgObj   ***
+***   MsgBin   ***
 *****************/
 
 var MSG = fiddle.FromHex("83b10ff1ecf79c0b")
 
-type MsgObj struct {
-    To  Obj
-    Dat Obj
+type MsgBin struct {
+    To  Bin
+    Dat Bin
 }
 
-func (obj *MsgObj) String () string {
-    return "<Msg:"+obj.To.String()+","+obj.Dat.String()+">"
+func (bin *MsgBin) String () string {
+    return "<Msg:"+bin.To.String()+","+bin.Dat.String()+">"
 }
 
-func DecodeMsg (obj *RawObj, recursive bool, dec *Decoder) Obj {
-    c := obj.Dat.Chunks(2)
+func DecodeMsg (bin *RawBin, recursive bool, dec *Decoder) Bin {
+    c := bin.Dat.Chunks(2)
     to  := dec.decode(c[0], recursive)
     dat := dec.decode(c[1], recursive)
-    return &MsgObj{to,dat}
+    return &MsgBin{to,dat}
 }
 
-func (obj *MsgObj) Encode () *fiddle.Bits {
-    return MSG.Plus(fiddle.FromChunks(obj.To.Encode(), obj.Dat.Encode()))
+func (bin *MsgBin) Encode () *fiddle.Bits {
+    return MSG.Plus(fiddle.FromChunks(bin.To.Encode(), bin.Dat.Encode()))
 }
 
 /*********************
-***   UnicodeObj   ***
+***   UnicodeBin   ***
 *********************/
 
 var UNICODE = fiddle.FromHex("85847aa769e16613")
 
-type UnicodeObj struct {
+type UnicodeBin struct {
     Dat string
 }
 
-func (obj *UnicodeObj) String () string {
-    return "<Unicode:"+obj.Dat+">"
+func (bin *UnicodeBin) String () string {
+    return "<Unicode:"+bin.Dat+">"
 }
 
-func DecodeUnicode (obj *RawObj, recursive bool, dec *Decoder) Obj {
-    return &UnicodeObj{obj.Dat.Unicode()}
+func DecodeUnicode (bin *RawBin, recursive bool, dec *Decoder) Bin {
+    return &UnicodeBin{bin.Dat.Unicode()}
 }
 
-func (obj *UnicodeObj) Encode () *fiddle.Bits {
-    return UNICODE.Plus(fiddle.FromUnicode(obj.Dat))
+func (bin *UnicodeBin) Encode () *fiddle.Bits {
+    return UNICODE.Plus(fiddle.FromUnicode(bin.Dat))
 }
 
 /*********************
-***   UdpAddrObj   ***
+***   UdpAddrBin   ***
 *********************/
 
 var UDPADDR = fiddle.FromHex("8027db830a702671")
 
-type UdpAddrObj struct {
+type UdpAddrBin struct {
     Dat string
 }
 
-func (obj *UdpAddrObj) String () string {
-    return "<UdpAddr:"+obj.Dat+">"
+func (bin *UdpAddrBin) String () string {
+    return "<UdpAddr:"+bin.Dat+">"
 }
 
-func DecodeUdpAddr (obj *RawObj, recursive bool, dec *Decoder) Obj {
-    return &UdpAddrObj{obj.Dat.Unicode()}
+func DecodeUdpAddr (bin *RawBin, recursive bool, dec *Decoder) Bin {
+    return &UdpAddrBin{bin.Dat.Unicode()}
 }
 
-func (obj *UdpAddrObj) Encode () *fiddle.Bits {
-    return UDPADDR.Plus(fiddle.FromUnicode(obj.Dat))
+func (bin *UdpAddrBin) Encode () *fiddle.Bits {
+    return UDPADDR.Plus(fiddle.FromUnicode(bin.Dat))
 }
