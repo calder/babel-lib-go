@@ -6,7 +6,7 @@ import "github.com/calder/fiddle"
 ***   NilBin   ***
 *****************/
 
-var NIL = fiddle.FromHex("0000000000000000")
+var NIL = fiddle.FromRawHex("0000000000000000")
 
 type NilBin struct {}
 
@@ -26,7 +26,7 @@ func (bin *NilBin) Encode () *fiddle.Bits {
 ***   IdBin   ***
 ****************/
 
-var ID = fiddle.FromHex("823f70579c7a29bf")
+var ID = fiddle.FromRawHex("823f70579c7a29bf")
 
 type IdBin struct {
     Dat *fiddle.Bits
@@ -48,7 +48,7 @@ func (bin *IdBin) Encode () *fiddle.Bits {
 ***   MsgBin   ***
 *****************/
 
-var MSG = fiddle.FromHex("83b10ff1ecf79c0b")
+var MSG = fiddle.FromRawHex("83b10ff1ecf79c0b")
 
 type MsgBin struct {
     To  Bin
@@ -74,7 +74,7 @@ func (bin *MsgBin) Encode () *fiddle.Bits {
 ***   UnicodeBin   ***
 *********************/
 
-var UNICODE = fiddle.FromHex("85847aa769e16613")
+var UNICODE = fiddle.FromRawHex("85847aa769e16613")
 
 type UnicodeBin struct {
     Dat string
@@ -96,7 +96,7 @@ func (bin *UnicodeBin) Encode () *fiddle.Bits {
 ***   UdpAddrStrBin   ***
 ************************/
 
-var UDPADDRSTR = fiddle.FromHex("8027db830a702671")
+var UDPADDRSTR = fiddle.FromRawHex("8027db830a702671")
 
 type UdpAddrStrBin struct {
     Dat string
@@ -118,7 +118,7 @@ func (bin *UdpAddrStrBin) Encode () *fiddle.Bits {
 ***   UdpSubBin   ***
 ********************/
 
-var UDPSUB = fiddle.FromHex("D9EB4EACD263ECFD")
+var UDPSUB = fiddle.FromRawHex("D9EB4EACD263ECFD")
 
 type UdpSubBin struct {
     Id   Bin
