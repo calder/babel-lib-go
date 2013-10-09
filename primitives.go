@@ -92,24 +92,50 @@ func (bin *UnicodeBin) Encode () *fiddle.Bits {
     return UNICODE.Plus(fiddle.FromUnicode(bin.Dat))
 }
 
-/*********************
-***   UdpAddrBin   ***
-*********************/
+/************************
+***   UdpAddrStrBin   ***
+************************/
 
-var UDPADDR = fiddle.FromHex("8027db830a702671")
+var UDPADDRSTR = fiddle.FromHex("8027db830a702671")
 
-type UdpAddrBin struct {
+type UdpAddrStrBin struct {
     Dat string
 }
 
-func (bin *UdpAddrBin) String () string {
-    return "<UdpAddr:"+bin.Dat+">"
+func (bin *UdpAddrStrBin) String () string {
+    return "<UdpAddrStr:"+bin.Dat+">"
 }
 
-func DecodeUdpAddr (bin *RawBin, recursive bool, dec *Decoder) Bin {
-    return &UdpAddrBin{bin.Dat.Unicode()}
+func DecodeUdpAddrStr (bin *RawBin, recursive bool, dec *Decoder) Bin {
+    return &UdpAddrStrBin{bin.Dat.Unicode()}
 }
 
-func (bin *UdpAddrBin) Encode () *fiddle.Bits {
-    return UDPADDR.Plus(fiddle.FromUnicode(bin.Dat))
+func (bin *UdpAddrStrBin) Encode () *fiddle.Bits {
+    return UDPADDRSTR.Plus(fiddle.FromUnicode(bin.Dat))
+}
+
+/********************
+***   UdpSubBin   ***
+********************/
+
+var UDPSUB = fiddle.FromHex("D9EB4EACD263ECFD")
+
+type UdpSubBin struct {
+    Id   Bin
+    Addr Bin
+}
+
+func (bin *UdpSubBin) String () string {
+    return "<UdpSub:"+bin.Id.String()+","+bin.Addr.String()+">"
+}
+
+func DecodeUdpSub (bin *RawBin, recursive bool, dec *Decoder) Bin {
+    c := bin.Dat.Chunks(2)
+    id   := dec.decode(c[0], recursive)
+    addr := dec.decode(c[1], recursive)
+    return &UdpSubBin{id,addr}
+}
+
+func (bin *UdpSubBin) Encode () *fiddle.Bits {
+    return UDPSUB.Plus(fiddle.FromChunks(bin.Id.Encode(), bin.Addr.Encode()))
 }

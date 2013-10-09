@@ -20,11 +20,12 @@ type Decoder struct {
 func NewDecoder () *Decoder {
     dec := NewEmptyDecoder()
 
-    dec.AddType(NIL,     DecodeNil)
-    dec.AddType(ID,      DecodeId)
-    dec.AddType(MSG,     DecodeMsg)
-    dec.AddType(UNICODE, DecodeUnicode)
-    dec.AddType(UDPADDR, DecodeUdpAddr)
+    dec.AddType(NIL,        DecodeNil)
+    dec.AddType(ID,         DecodeId)
+    dec.AddType(MSG,        DecodeMsg)
+    dec.AddType(UNICODE,    DecodeUnicode)
+    dec.AddType(UDPADDRSTR, DecodeUdpAddrStr)
+    dec.AddType(UDPSUB,     DecodeUdpSub)
 
     return dec
 }
