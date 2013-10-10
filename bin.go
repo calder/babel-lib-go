@@ -21,7 +21,7 @@ type RawBin struct {
 }
 
 func (bin *RawBin) String () string {
-    return "<"+bin.Typ.Hex()+":"+bin.Dat.Hex()+">"
+    return "<"+bin.Typ.RawHex()+":"+bin.Dat.RawHex()+">"
 }
 
 func DecodeRaw (bits *fiddle.Bits) *RawBin {

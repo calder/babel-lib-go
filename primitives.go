@@ -33,7 +33,7 @@ type IdBin struct {
 }
 
 func (bin *IdBin) String () string {
-    return "<Id:"+bin.Dat.Hex()+">"
+    return "<Id:"+bin.Dat.RawHex()+">"
 }
 
 func DecodeId (bin *RawBin, recursive bool, dec *Decoder) Bin {
