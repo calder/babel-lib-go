@@ -3,66 +3,43 @@ package babel
 import "errors"
 import "github.com/calder/fiddle"
 
-/****************
-***   Types   ***
-****************/
+/*****************
+***   Public   ***
+*****************/
 
-type DecoderFunc func(*RawBin,bool,*Decoder)Bin
+type DecoderFunc func(*RawBin,bool)Bin
 
-type Decoder struct {
-    fns map[string]DecoderFunc
+func AddType (typ *fiddle.Bits, decoder DecoderFunc) {
+    decoders[typ.Hex()] = decoder
 }
 
-/***********************
-***   Constructors   ***
-***********************/
-
-func NewDecoder () *Decoder {
-    dec := NewEmptyDecoder()
-
-    dec.AddType(NIL,        DecodeNil)
-    dec.AddType(ID,         DecodeId)
-    dec.AddType(MSG,        DecodeMsg)
-    dec.AddType(UNICODE,    DecodeUnicode)
-    dec.AddType(UDPADDRSTR, DecodeUdpAddrStr)
-    dec.AddType(UDPSUB,     DecodeUdpSub)
-
-    return dec
+func Decode (bits *fiddle.Bits) Bin {
+    return decode(bits, true)
 }
 
-func NewEmptyDecoder () *Decoder {
-    return &Decoder{make(map[string]DecoderFunc)}
+func DecodeShallow (bits *fiddle.Bits) Bin {
+    return decode(bits, false)
+}
+
+func DecodeBytes (bytes []byte) Bin {
+    return decode(fiddle.FromBytes(bytes), true)
+}
+
+func DecodeShallowBytes (bytes []byte) Bin {
+    return decode(fiddle.FromBytes(bytes), false)
 }
 
 /******************
-***   Methods   ***
+***   Private   ***
 ******************/
 
-func (dec *Decoder) AddType (typ *fiddle.Bits, decoder DecoderFunc) {
-    dec.fns[typ.Hex()] = decoder
-}
+var decoders = make(map[string]DecoderFunc)
 
-func (dec *Decoder) decode (bits *fiddle.Bits, recursive bool) Bin {
+func decode (bits *fiddle.Bits, recursive bool) Bin {
     if bits.Len() < 64 { panic(errors.New("Decoding error: missing type signature")) }
     typ := bits.To(64).Hex()
-    fun := dec.fns[typ]
+    fun := decoders[typ]
     if fun == nil { panic(errors.New("Decoding error: unkown type "+typ)) }
     bin := DecodeRaw(bits)
-    return dec.fns[typ](bin, recursive, dec)
-}
-
-func (dec *Decoder) Decode (bits *fiddle.Bits) Bin {
-    return dec.decode(bits, true)
-}
-
-func (dec *Decoder) DecodePartial (bits *fiddle.Bits) Bin {
-    return dec.decode(bits, false)
-}
-
-func (dec *Decoder) DecodeBytes (bytes []byte) Bin {
-    return dec.decode(fiddle.FromBytes(bytes), true)
-}
-
-func (dec *Decoder) DecodePartialBytes (bytes []byte) Bin {
-    return dec.decode(fiddle.FromBytes(bytes), false)
+    return decoders[typ](bin, recursive)
 }
