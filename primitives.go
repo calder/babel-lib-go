@@ -67,7 +67,7 @@ type Message struct {
 }
 
 func (msg *Message) String () string {
-    return "<Message:"+msg.To.String()+","+msg.Dat.String()+">"
+    return "<Message:"+msg.To.String()+","+msg.Dat.RawHex()+">"
 }
 
 func EncodeMessage (val Any) *fiddle.Bits {
