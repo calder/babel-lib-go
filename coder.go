@@ -45,6 +45,10 @@ func DecodeUnsafe (bits *fiddle.Bits) Any {
     return decode(bits)
 }
 
+func DecodeBytesUnsafe (bytes []byte) Any {
+    return DecodeUnsafe(fiddle.FromBytes(bytes))
+}
+
 /******************
 ***   Private   ***
 ******************/
