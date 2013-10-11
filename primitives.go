@@ -1,147 +1,136 @@
 package babel
 
+import "errors"
 import "github.com/calder/fiddle"
 
-/*****************
-***   NilBin   ***
-*****************/
+/**************
+***   Nil   ***
+**************/
 
 var NIL = fiddle.FromRawHex("0000000000000000")
-func init () { AddType(NIL, DecodeNil) }
+func init () { AddType(NIL, EncodeNil, DecodeNil) }
 
-type NilBin struct {}
-
-func (bin *NilBin) String () string {
-    return "<Nil>"
+func DecodeNil (typ *fiddle.Bits, dat *fiddle.Bits) Any {
+    return nil
 }
 
-func DecodeNil (bin *RawBin, recursive bool) Bin {
-    return &NilBin{}
-}
-
-func (bin *NilBin) Encode () *fiddle.Bits {
+func EncodeNil (val Any) *fiddle.Bits {
+    if val != nil { panic(errors.New("EncodeNil() called on non-nil")) }
     return NIL
 }
 
-/****************
-***   IdBin   ***
-****************/
+/*************
+***   Id   ***
+*************/
 
 var ID = fiddle.FromRawHex("823f70579c7a29bf")
-func init () { AddType(ID, DecodeId) }
+func init () { AddType(ID, EncodeId, DecodeId) }
 
-type IdBin struct {
+type Id struct {
     Dat *fiddle.Bits
 }
 
-func (bin *IdBin) String () string {
-    return "<Id:"+bin.Dat.RawHex()+">"
+func (id *Id) String () string {
+    return "<Id:"+id.Dat.RawHex()+">"
 }
 
-func DecodeId (bin *RawBin, recursive bool) Bin {
-    return &IdBin{bin.Dat}
+func DecodeId (typ *fiddle.Bits, dat *fiddle.Bits) Any {
+    return &Id{dat}
 }
 
-func (bin *IdBin) Encode () *fiddle.Bits {
-    return ID.Plus(bin.Dat)
+func EncodeId (val Any) *fiddle.Bits {
+    id := val.(*Id)
+    return ID.Plus(id.Dat)
 }
 
-/*****************
-***   MsgBin   ***
-*****************/
+/******************
+***   Message   ***
+******************/
 
-var MSG = fiddle.FromRawHex("83b10ff1ecf79c0b")
-func init () { AddType(MSG, DecodeMsg) }
+var MESSAGE = fiddle.FromRawHex("83b10ff1ecf79c0b")
+func init () { AddType(MESSAGE, EncodeMessage, DecodeMessage) }
 
-type MsgBin struct {
-    To  Bin
-    Dat Bin
+type Message struct {
+    To  *Id
+    Dat *fiddle.Bits
 }
 
-func (bin *MsgBin) String () string {
-    return "<Msg:"+bin.To.String()+","+bin.Dat.String()+">"
+func (msg *Message) String () string {
+    return "<Message:"+msg.To.String()+","+msg.Dat.String()+">"
 }
 
-func DecodeMsg (bin *RawBin, recursive bool) Bin {
-    c := bin.Dat.Chunks(2)
-    to  := decode(c[0], recursive)
-    dat := decode(c[1], recursive)
-    return &MsgBin{to,dat}
+func DecodeMessage (typ *fiddle.Bits, dat *fiddle.Bits) Any {
+    c := dat.Chunks(2)
+    return &Message{decode(c[0]).(*Id), c[1]}
 }
 
-func (bin *MsgBin) Encode () *fiddle.Bits {
-    return MSG.Plus(fiddle.FromChunks(bin.To.Encode(), bin.Dat.Encode()))
+func EncodeMessage (val Any) *fiddle.Bits {
+    msg := val.(*Message)
+    return MESSAGE.Plus(fiddle.FromChunks(encode(msg.To), encode(msg.Dat)))
+}
+
+/******************
+***   Unicode   ***
+******************/
+
+var UNICODE = fiddle.FromRawHex("85847aa769e16613")
+func init () { AddType(UNICODE, EncodeUnicode, DecodeUnicode) }
+
+func DecodeUnicode (typ *fiddle.Bits, dat *fiddle.Bits) Any {
+    return dat.Unicode()
+}
+
+func EncodeUnicode (val Any) *fiddle.Bits {
+    str := val.(string)
+    return UNICODE.Plus(fiddle.FromUnicode(str))
 }
 
 /*********************
-***   UnicodeBin   ***
+***   UdpAddrStr   ***
 *********************/
 
-var UNICODE = fiddle.FromRawHex("85847aa769e16613")
-func init () { AddType(UNICODE, DecodeUnicode) }
-
-type UnicodeBin struct {
-    Dat string
-}
-
-func (bin *UnicodeBin) String () string {
-    return "<Unicode:"+bin.Dat+">"
-}
-
-func DecodeUnicode (bin *RawBin, recursive bool) Bin {
-    return &UnicodeBin{bin.Dat.Unicode()}
-}
-
-func (bin *UnicodeBin) Encode () *fiddle.Bits {
-    return UNICODE.Plus(fiddle.FromUnicode(bin.Dat))
-}
-
-/************************
-***   UdpAddrStrBin   ***
-************************/
-
 var UDPADDRSTR = fiddle.FromRawHex("8027db830a702671")
-func init () { AddType(UDPADDRSTR, DecodeUdpAddrStr) }
+func init () { AddType(UDPADDRSTR, EncodeUdpAddrStr, DecodeUdpAddrStr) }
 
-type UdpAddrStrBin struct {
+type UdpAddrStr struct {
     Dat string
 }
 
-func (bin *UdpAddrStrBin) String () string {
-    return "<UdpAddrStr:"+bin.Dat+">"
+func (addr *UdpAddrStr) String () string {
+    return "<UdpAddrStr:"+addr.Dat+">"
 }
 
-func DecodeUdpAddrStr (bin *RawBin, recursive bool) Bin {
-    return &UdpAddrStrBin{bin.Dat.Unicode()}
+func DecodeUdpAddrStr (typ *fiddle.Bits, dat *fiddle.Bits) Any {
+    return &UdpAddrStr{dat.Unicode()}
 }
 
-func (bin *UdpAddrStrBin) Encode () *fiddle.Bits {
-    return UDPADDRSTR.Plus(fiddle.FromUnicode(bin.Dat))
+func EncodeUdpAddrStr (val Any) *fiddle.Bits {
+    addr := val.(*UdpAddrStr)
+    return UDPADDRSTR.Plus(fiddle.FromUnicode(addr.Dat))
 }
 
-/********************
-***   UdpSubBin   ***
-********************/
+/*****************
+***   UdpSub   ***
+*****************/
 
 var UDPSUB = fiddle.FromRawHex("D9EB4EACD263ECFD")
-func init () { AddType(UDPSUB, DecodeUdpSub) }
+func init () { AddType(UDPSUB, EncodeUdpSub, DecodeUdpSub) }
 
-type UdpSubBin struct {
-    Id   Bin
-    Addr Bin
+type UdpSub struct {
+    Id   *Id
+    Addr *UdpAddrStr
 }
 
-func (bin *UdpSubBin) String () string {
-    return "<UdpSub:"+bin.Id.String()+","+bin.Addr.String()+">"
+func (sub *UdpSub) String () string {
+    return "<UdpSub:"+sub.Id.String()+","+sub.Addr.String()+">"
 }
 
-func DecodeUdpSub (bin *RawBin, recursive bool) Bin {
-    c := bin.Dat.Chunks(2)
-    id   := decode(c[0], recursive)
-    addr := decode(c[1], recursive)
-    return &UdpSubBin{id,addr}
+func DecodeUdpSub (typ *fiddle.Bits, dat *fiddle.Bits) Any {
+    c := dat.Chunks(2)
+    return &UdpSub{decode(c[0]).(*Id), decode(c[1]).(*UdpAddrStr)}
 }
 
-func (bin *UdpSubBin) Encode () *fiddle.Bits {
-    return UDPSUB.Plus(fiddle.FromChunks(bin.Id.Encode(), bin.Addr.Encode()))
+func EncodeUdpSub (val Any) *fiddle.Bits {
+    sub := val.(*UdpSub)
+    return UDPSUB.Plus(fiddle.FromChunks(encode(sub.Id), encode(sub.Addr)))
 }
