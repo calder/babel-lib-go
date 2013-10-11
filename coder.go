@@ -18,17 +18,31 @@ func AddType (typ *fiddle.Bits, encoder EncoderFunc, decoder DecoderFunc) {
 }
 
 func Encode (val Any) (bits *fiddle.Bits, err error) {
-    defer func () { err = recover().(error) }()
+    defer func () {
+        e := recover()
+        if err != nil { err = e.(error) }
+    }()
     return encode(val), err
 }
 
 func Decode (bits *fiddle.Bits) (res Any, err error) {
-    defer func () { err = recover().(error) }()
+    defer func () {
+        e := recover()
+        if err != nil { err = e.(error) }
+    }()
     return decode(bits), err
 }
 
 func DecodeBytes (bytes []byte) (res Any, err error) {
     return Decode(fiddle.FromBytes(bytes))
+}
+
+func EncodeUnsafe (val Any) *fiddle.Bits {
+    return encode(val)
+}
+
+func DecodeUnsafe (bits *fiddle.Bits) Any {
+    return decode(bits)
 }
 
 /******************

@@ -3,6 +3,17 @@ package babel
 import "errors"
 import "github.com/calder/fiddle"
 
+/******************************
+***   Bits (don't encode)   ***
+******************************/
+
+func init () { AddType(fiddle.Nil(), EncodeBits, nil) }
+
+func EncodeBits (val Any) *fiddle.Bits {
+    bits := val.(*fiddle.Bits)
+    return bits
+}
+
 /**************
 ***   Nil   ***
 **************/
@@ -10,13 +21,13 @@ import "github.com/calder/fiddle"
 var NIL = fiddle.FromRawHex("0000000000000000")
 func init () { AddType(NIL, EncodeNil, DecodeNil) }
 
-func DecodeNil (typ *fiddle.Bits, dat *fiddle.Bits) Any {
-    return nil
-}
-
 func EncodeNil (val Any) *fiddle.Bits {
     if val != nil { panic(errors.New("EncodeNil() called on non-nil")) }
     return NIL
+}
+
+func DecodeNil (typ *fiddle.Bits, dat *fiddle.Bits) Any {
+    return nil
 }
 
 /*************
@@ -34,13 +45,13 @@ func (id *Id) String () string {
     return "<Id:"+id.Dat.RawHex()+">"
 }
 
-func DecodeId (typ *fiddle.Bits, dat *fiddle.Bits) Any {
-    return &Id{dat}
-}
-
 func EncodeId (val Any) *fiddle.Bits {
     id := val.(*Id)
     return ID.Plus(id.Dat)
+}
+
+func DecodeId (typ *fiddle.Bits, dat *fiddle.Bits) Any {
+    return &Id{dat}
 }
 
 /******************
@@ -59,14 +70,14 @@ func (msg *Message) String () string {
     return "<Message:"+msg.To.String()+","+msg.Dat.String()+">"
 }
 
-func DecodeMessage (typ *fiddle.Bits, dat *fiddle.Bits) Any {
-    c := dat.Chunks(2)
-    return &Message{decode(c[0]).(*Id), c[1]}
-}
-
 func EncodeMessage (val Any) *fiddle.Bits {
     msg := val.(*Message)
     return MESSAGE.Plus(fiddle.FromChunks(encode(msg.To), encode(msg.Dat)))
+}
+
+func DecodeMessage (typ *fiddle.Bits, dat *fiddle.Bits) Any {
+    c := dat.Chunks(2)
+    return &Message{decode(c[0]).(*Id), c[1]}
 }
 
 /******************
@@ -100,13 +111,13 @@ func (addr *UdpAddrStr) String () string {
     return "<UdpAddrStr:"+addr.Dat+">"
 }
 
-func DecodeUdpAddrStr (typ *fiddle.Bits, dat *fiddle.Bits) Any {
-    return &UdpAddrStr{dat.Unicode()}
-}
-
 func EncodeUdpAddrStr (val Any) *fiddle.Bits {
     addr := val.(*UdpAddrStr)
     return UDPADDRSTR.Plus(fiddle.FromUnicode(addr.Dat))
+}
+
+func DecodeUdpAddrStr (typ *fiddle.Bits, dat *fiddle.Bits) Any {
+    return &UdpAddrStr{dat.Unicode()}
 }
 
 /*****************
@@ -125,12 +136,12 @@ func (sub *UdpSub) String () string {
     return "<UdpSub:"+sub.Id.String()+","+sub.Addr.String()+">"
 }
 
-func DecodeUdpSub (typ *fiddle.Bits, dat *fiddle.Bits) Any {
-    c := dat.Chunks(2)
-    return &UdpSub{decode(c[0]).(*Id), decode(c[1]).(*UdpAddrStr)}
-}
-
 func EncodeUdpSub (val Any) *fiddle.Bits {
     sub := val.(*UdpSub)
     return UDPSUB.Plus(fiddle.FromChunks(encode(sub.Id), encode(sub.Addr)))
+}
+
+func DecodeUdpSub (typ *fiddle.Bits, dat *fiddle.Bits) Any {
+    c := dat.Chunks(2)
+    return &UdpSub{decode(c[0]).(*Id), decode(c[1]).(*UdpAddrStr)}
 }
