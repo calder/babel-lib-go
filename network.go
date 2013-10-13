@@ -61,7 +61,6 @@ func ReceiveUdp (addrStr string, maxPacketBytes int, handler PacketHandler, erro
             // Process the packet
             pkt, e := DecodeBytes(buf[:n])
             if e != nil { errorHandler(e); continue }
-            log.Println(pkt)
             handler(pkt)
         }
     }()
