@@ -72,7 +72,7 @@ func (msg *Message) String () string {
 
 func EncodeMessage (val Any) *fiddle.Bits {
     msg := val.(*Message)
-    return MESSAGE.Plus(fiddle.FromChunks(encode(msg.To), encode(msg.Dat)))
+    return MESSAGE.Plus(fiddle.FromChunks(encode(msg.To), msg.Dat))
 }
 
 func DecodeMessage (typ *fiddle.Bits, dat *fiddle.Bits) Any {
@@ -144,4 +144,30 @@ func EncodeUdpSub (val Any) *fiddle.Bits {
 func DecodeUdpSub (typ *fiddle.Bits, dat *fiddle.Bits) Any {
     c := dat.Chunks(2)
     return &UdpSub{decode(c[0]).(*Id), decode(c[1]).(*UdpAddrStr)}
+}
+
+/*****************
+***   RsaDat   ***
+*****************/
+
+var RSADAT = fiddle.FromRawHex("5946F91D56354917")
+func init () { AddType(RSADAT, EncodeRsaDat, DecodeRsaDat) }
+
+type RsaDat struct {
+    Key *Id
+    Dat *fiddle.Bits
+}
+
+func (dat *RsaDat) String () string {
+    return "<RsaDat:"+dat.Key.String()+","+dat.Dat.String()+">"
+}
+
+func EncodeRsaDat (val Any) *fiddle.Bits {
+    dat := val.(*RsaDat)
+    return RSADAT.Plus(fiddle.FromChunks(encode(dat.Key), dat.Dat))
+}
+
+func DecodeRsaDat (typ *fiddle.Bits, dat *fiddle.Bits) Any {
+    c := dat.Chunks(2)
+    return &RsaDat{decode(c[0]).(*Id), c[1]}
 }

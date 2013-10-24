@@ -58,7 +58,7 @@ var decoders = make(map[string]DecoderFunc)
 
 func encode (val Any) *fiddle.Bits {
     var res *fiddle.Bits
-    err := errors.New("unable to decode")
+    err := errors.New("unable to encode")
     for _, encoder := range encoders {
         func () (succ bool) {
             defer func () {
