@@ -180,7 +180,7 @@ func DecodeBox (typ *fiddle.Bits, dat *fiddle.Bits) Any {
 ***   PubKey1   ***
 ******************/
 
-// Asymmetric: RSA 4096
+// Asymmetric: RSA (any key size)
 // Symmetric:  AES 256 CFB
 // Padding:    OAEP SHA-1
 
@@ -197,13 +197,14 @@ func (dat *PubKey1) String () string {
 
 func EncodePubKey1 (val Any) *fiddle.Bits {
     key := val.(*PubKey1)
-    n := fiddle.FromBigInt(key.Key.N).PadLeft(4096)
-    e := fiddle.FromInt(key.Key.E).PadLeft(32)
-    return PUBKEY1.Plus(n).Plus(e)
+    n := fiddle.FromBigInt(key.Key.N)
+    e := fiddle.FromInt(key.Key.E)
+    return PUBKEY1.Plus(fiddle.FromChunks(n, e))
 }
 
 func DecodePubKey1 (typ *fiddle.Bits, dat *fiddle.Bits) Any {
-    return &PubKey1{&rsa.PublicKey{dat.To(4096).BigInt(), dat.From(4096).Int()}}
+    c := dat.Chunks(2)
+    return &PubKey1{&rsa.PublicKey{c[0].BigInt(), c[1].Int()}}
 }
 
 /******************
