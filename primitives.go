@@ -1,5 +1,6 @@
 package babel
 
+import "crypto/rsa"
 import "errors"
 import "github.com/calder/fiddle"
 
@@ -10,8 +11,7 @@ import "github.com/calder/fiddle"
 func init () { AddType(fiddle.Nil(), EncodeBits, nil) }
 
 func EncodeBits (val Any) *fiddle.Bits {
-    bits := val.(*fiddle.Bits)
-    return bits
+    return val.(*fiddle.Bits)
 }
 
 /**************
@@ -146,28 +146,59 @@ func DecodeUdpSub (typ *fiddle.Bits, dat *fiddle.Bits) Any {
     return &UdpSub{decode(c[0]).(*Id), decode(c[1]).(*UdpAddrStr)}
 }
 
-/*****************
-***   RsaDat   ***
-*****************/
+/**************
+***   Box   ***
+**************/
 
-var RSADAT = fiddle.FromRawHex("5946F91D56354917")
-func init () { AddType(RSADAT, EncodeRsaDat, DecodeRsaDat) }
+var BOX = fiddle.FromRawHex("5946F91D56354917")
+func init () { AddType(BOX, EncodeBox, DecodeBox) }
 
-type RsaDat struct {
+type Box struct {
     Key *Id
     Dat *fiddle.Bits
 }
 
-func (dat *RsaDat) String () string {
-    return "<RsaDat:"+dat.Key.String()+","+dat.Dat.String()+">"
+func (dat *Box) String () string {
+    return "<Box:"+dat.Key.String()+","+dat.Dat.String()+">"
 }
 
-func EncodeRsaDat (val Any) *fiddle.Bits {
-    dat := val.(*RsaDat)
-    return RSADAT.Plus(fiddle.FromChunks(encode(dat.Key), dat.Dat))
+func EncodeBox (val Any) *fiddle.Bits {
+    box := val.(*Box)
+    return BOX.Plus(fiddle.FromChunks(encode(box.Key), box.Dat))
 }
 
-func DecodeRsaDat (typ *fiddle.Bits, dat *fiddle.Bits) Any {
+func DecodeBox (typ *fiddle.Bits, dat *fiddle.Bits) Any {
     c := dat.Chunks(2)
-    return &RsaDat{decode(c[0]).(*Id), c[1]}
+    return &Box{decode(c[0]).(*Id), c[1]}
+}
+
+/******************
+***   PubKey1   ***
+******************/
+
+// Asymmetric: RSA 4096
+// Symmetric:  AES 256
+// Padding:    OAEP SHA-1
+
+var PUBKEY1 = fiddle.FromRawHex("A7F3D2EE90717395")
+func init () { AddType(PUBKEY1, EncodePubKey1, DecodePubKey1) }
+
+type PubKey1 struct {
+    Key *rsa.PublicKey
+}
+
+func (dat *PubKey1) String () string {
+    return "<PubKey1:"+dat.Key.N.String()+","+string(dat.Key.E)+">"
+}
+
+func EncodePubKey1 (val Any) *fiddle.Bits {
+    key := val.(*PubKey1)
+    n := fiddle.FromBigInt(key.Key.N).PadLeft(4096)
+    e := fiddle.FromInt(key.Key.E).PadLeft(32)
+    return PUBKEY1.Plus(fiddle.FromChunks(n, e))
+}
+
+func DecodePubKey1 (typ *fiddle.Bits, dat *fiddle.Bits) Any {
+    c := dat.Chunks(2)
+    return &PubKey1{&rsa.PublicKey{c[0].BigInt(), c[1].Int()}}
 }
