@@ -181,7 +181,7 @@ func DecodeBox (typ *fiddle.Bits, dat *fiddle.Bits) Any {
 ******************/
 
 // Asymmetric: RSA 4096
-// Symmetric:  AES 256
+// Symmetric:  AES 256 CFB
 // Padding:    OAEP SHA-1
 
 var PUBKEY1 = fiddle.FromRawHex("A7F3D2EE90717395")
@@ -199,10 +199,36 @@ func EncodePubKey1 (val Any) *fiddle.Bits {
     key := val.(*PubKey1)
     n := fiddle.FromBigInt(key.Key.N).PadLeft(4096)
     e := fiddle.FromInt(key.Key.E).PadLeft(32)
-    return PUBKEY1.Plus(fiddle.FromChunks(n, e))
+    return PUBKEY1.Plus(n).Plus(e)
 }
 
 func DecodePubKey1 (typ *fiddle.Bits, dat *fiddle.Bits) Any {
-    c := dat.Chunks(2)
-    return &PubKey1{&rsa.PublicKey{c[0].BigInt(), c[1].Int()}}
+    return &PubKey1{&rsa.PublicKey{dat.To(4096).BigInt(), dat.From(4096).Int()}}
 }
+
+/******************
+***   PriKey1   ***
+******************/
+
+// var PRIKEY1 = fiddle.FromRawHex("D4B1E1B24361AFAF")
+// func init () { AddType(PRIKEY1, EncodePriKey1, DecodePriKey1) }
+
+// type PriKey1 struct {
+//     Key *rsa.PrivateKey
+// }
+
+// func (dat *PriKey1) String () string {
+//     return "<PriKey1:"+dat.Key.N.String()+","+string(dat.Key.E)+">"
+// }
+
+// func EncodePriKey1 (val Any) *fiddle.Bits {
+//     key := val.(*PriKey1)
+//     n := fiddle.FromBigInt(key.Key.N)
+//     e := fiddle.FromInt(key.Key.E)
+//     return PRIKEY1.Plus(fiddle.FromChunks(n, e))
+// }
+
+// func DecodePriKey1 (typ *fiddle.Bits, dat *fiddle.Bits) Any {
+//     c := dat.Chunks(2)
+//     return &PriKey1{&rsa.PrivateKey{c[0].BigInt(), c[1].Int()}}
+// }
