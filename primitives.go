@@ -45,6 +45,10 @@ func (id *Id) String () string {
     return "<Id:"+id.Dat.RawHex()+">"
 }
 
+func (id *Id) Equal (id2 *Id) bool {
+    return id.Dat.Equal(id2.Dat)
+}
+
 func EncodeId (val Any) *fiddle.Bits {
     id := val.(*Id)
     return ID.Plus(id.Dat)
