@@ -228,6 +228,10 @@ func (key *PriKey1) String () string {
     return s
 }
 
+func (key *PriKey1) Pub () *PubKey1 {
+    return &PubKey1{&key.Key.PublicKey}
+}
+
 func EncodePriKey1 (val Any) *fiddle.Bits {
     key := val.(*PriKey1)
     primes := make([]*fiddle.Bits, len(key.Key.Primes))

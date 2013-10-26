@@ -46,7 +46,7 @@ func (key *PubKey1) Encrypt (dat *fiddle.Bits) *fiddle.Bits {
     block, e := aes.NewCipher(plainKey)
     if e != nil { panic(e) }
 
-    // Generate 256-bit initialization vector
+    // Generate 128-bit initialization vector
     iv := make([]byte, aes.BlockSize)
     _, e = io.ReadFull(rand.Reader, iv)
     if e != nil { panic(e) }
@@ -62,6 +62,7 @@ func (key *PubKey1) Encrypt (dat *fiddle.Bits) *fiddle.Bits {
     // Prepend the initialization vector
     cipherText = append(iv, cipherText...)
 
+    // Encode the message
     return fiddle.FromChunks(fiddle.FromRawBytes(cipherKey), fiddle.FromRawBytes(cipherText))
 }
 
@@ -70,5 +71,30 @@ func (key *PubKey1) Encrypt (dat *fiddle.Bits) *fiddle.Bits {
 ******************/
 
 func (key *PriKey1) Decrypt (dat *fiddle.Bits) *fiddle.Bits {
-    return nil // FIXME
+    // Break up the message chunks
+    c := dat.Chunks(2)
+    cipherKey := c[0].RawBytes()
+    cipherText := c[1].RawBytes()
+
+    // Decrypt session key
+    plainKey, e := rsa.DecryptOAEP(sha1.New(), rand.Reader, key.Key, cipherKey, nil)
+    if e != nil { panic(e) }
+
+    // Create the block cipher
+    block, e := aes.NewCipher(plainKey)
+    if e != nil { panic(e) }
+
+    // Read the 128-bit initialization vector
+    iv := cipherText[:16]
+    cipherText = cipherText[16:]
+
+    // Create the stream cipher
+    stream := cipher.NewCFBDecrypter(block, iv)
+
+    // Decrypt message
+    plainText := make([]byte, len(cipherText))
+    stream.XORKeyStream(plainText, cipherText)
+
+    // Decode the message
+    return fiddle.FromBytes(plainText)
 }
