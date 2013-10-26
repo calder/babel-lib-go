@@ -2,6 +2,8 @@ package babel
 
 import "crypto/rsa"
 import "errors"
+import "math/big"
+import "strconv"
 import "github.com/calder/fiddle"
 
 /******************************
@@ -191,8 +193,8 @@ type PubKey1 struct {
     Key *rsa.PublicKey
 }
 
-func (dat *PubKey1) String () string {
-    return "<PubKey1:"+dat.Key.N.String()+","+string(dat.Key.E)+">"
+func (key *PubKey1) String () string {
+    return "<PubKey1:"+key.Key.N.String()+","+strconv.Itoa(key.Key.E)+">"
 }
 
 func EncodePubKey1 (val Any) *fiddle.Bits {
@@ -211,25 +213,39 @@ func DecodePubKey1 (typ *fiddle.Bits, dat *fiddle.Bits) Any {
 ***   PriKey1   ***
 ******************/
 
-// var PRIKEY1 = fiddle.FromRawHex("D4B1E1B24361AFAF")
-// func init () { AddType(PRIKEY1, EncodePriKey1, DecodePriKey1) }
+var PRIKEY1 = fiddle.FromRawHex("D4B1E1B24361AFAF")
+func init () { AddType(PRIKEY1, EncodePriKey1, DecodePriKey1) }
 
-// type PriKey1 struct {
-//     Key *rsa.PrivateKey
-// }
+type PriKey1 struct {
+    Key *rsa.PrivateKey
+}
 
-// func (dat *PriKey1) String () string {
-//     return "<PriKey1:"+dat.Key.N.String()+","+string(dat.Key.E)+">"
-// }
+func (key *PriKey1) String () string {
+    s := "<PriKey1:"
+    for _, p := range key.Key.Primes { s += p.String()+"," }
+    s += key.Key.D.String() + ","
+    s += strconv.Itoa(key.Key.PublicKey.E) + ">"
+    return s
+}
 
-// func EncodePriKey1 (val Any) *fiddle.Bits {
-//     key := val.(*PriKey1)
-//     n := fiddle.FromBigInt(key.Key.N)
-//     e := fiddle.FromInt(key.Key.E)
-//     return PRIKEY1.Plus(fiddle.FromChunks(n, e))
-// }
+func EncodePriKey1 (val Any) *fiddle.Bits {
+    key := val.(*PriKey1)
+    primes := make([]*fiddle.Bits, len(key.Key.Primes))
+    for i, p := range key.Key.Primes { primes[i] = fiddle.FromBigInt(p) }
+    ps := fiddle.FromList(primes)
+    d  := fiddle.FromBigInt(key.Key.D)
+    e  := fiddle.FromInt(key.Key.PublicKey.E)
+    return PRIKEY1.Plus(fiddle.FromChunks(ps, d, e))
+}
 
-// func DecodePriKey1 (typ *fiddle.Bits, dat *fiddle.Bits) Any {
-//     c := dat.Chunks(2)
-//     return &PriKey1{&rsa.PrivateKey{c[0].BigInt(), c[1].Int()}}
-// }
+func DecodePriKey1 (typ *fiddle.Bits, dat *fiddle.Bits) Any {
+    c := dat.Chunks(3)
+    ps := c[0].List()
+    primes := make([]*big.Int, len(ps))
+    for i, p := range ps { primes[i] = p.BigInt() }
+    n := big.NewInt(1)
+    for _, p := range primes { n.Mul(n,p) }
+    d := c[1].BigInt()
+    e := c[2].Int()
+    return &PriKey1{&rsa.PrivateKey{PublicKey:rsa.PublicKey{n,e}, D:d, Primes:primes}}
+}

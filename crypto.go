@@ -34,7 +34,7 @@ type SimKey interface {
 
 func (key *PubKey1) Encrypt (dat *fiddle.Bits) *fiddle.Bits {
     // Generate 256-bit session key
-    plainKey := make([]byte, 32)
+    plainKey := make([]byte, 256/8)
     _, e := io.ReadFull(rand.Reader, plainKey)
     if e != nil { panic(e) }
 
@@ -52,15 +52,23 @@ func (key *PubKey1) Encrypt (dat *fiddle.Bits) *fiddle.Bits {
     if e != nil { panic(e) }
 
     // Create the stream cipher
-    steam := cipher.NewCFBEncrypter(block, iv)
+    stream := cipher.NewCFBEncrypter(block, iv)
 
     // Encrypt the message
     plainText := dat.Bytes()
     cipherText := make([]byte, len(plainText))
-    steam.XORKeyStream(cipherText, plainText)
+    stream.XORKeyStream(cipherText, plainText)
 
     // Prepend the initialization vector
     cipherText = append(iv, cipherText...)
 
     return fiddle.FromChunks(fiddle.FromRawBytes(cipherKey), fiddle.FromRawBytes(cipherText))
+}
+
+/******************
+***   PriKey1   ***
+******************/
+
+func (key *PriKey1) Decrypt (dat *fiddle.Bits) *fiddle.Bits {
+    return nil // FIXME
 }
