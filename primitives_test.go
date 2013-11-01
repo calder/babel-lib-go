@@ -6,7 +6,7 @@ import "testing"
 
 func TestBox (T *testing.T) {
     for i := 0; i < 1000; i++ {
-        key := randId()
+        key := randId1()
         dat := randBits()
         en  := EncodeBox(&Box{key,dat})
         de  := DecodeBox(en.To(64), en.From(64)).(*Box)

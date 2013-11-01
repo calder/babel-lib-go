@@ -27,7 +27,7 @@ func ErrorLogger (err error) {
 ***   Vita Over Local Dispatch   ***
 ***********************************/
 
-func Receive (id *Id, handler PacketHandler, errorHandler ErrorHandler) error {
+func Receive (id *Id1, handler PacketHandler, errorHandler ErrorHandler) error {
     addr, e := ReceiveUdp(":0", UdpMaxPacketSize, handler, errorHandler)
     if e != nil { return e }
     e = SendUdp(UdpDispatchAddr, &UdpSub{id, &UdpAddrStr{addr}})
@@ -35,7 +35,7 @@ func Receive (id *Id, handler PacketHandler, errorHandler ErrorHandler) error {
     return nil
 }
 
-func Send (to *Id, dat *fiddle.Bits) error {
+func Send (to *Id1, dat *fiddle.Bits) error {
     return SendUdp(UdpDispatchAddr, &Message{to, dat})
 }
 

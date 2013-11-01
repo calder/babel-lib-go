@@ -9,8 +9,8 @@ func randBits () *fiddle.Bits {
     return b.To(rand.Intn(b.Len()+1))
 }
 
-func randId () *Id {
-    return &Id{fiddle.FromInt(rand.Int()).Plus(fiddle.FromInt(rand.Int())).Plus(fiddle.FromInt(rand.Int())).Plus(fiddle.FromInt(rand.Int())).PadLeft(256)}
+func randId1 () *Id1 {
+    return &Id1{fiddle.FromInt(rand.Int()).Plus(fiddle.FromInt(rand.Int())).Plus(fiddle.FromInt(rand.Int())).Plus(fiddle.FromInt(rand.Int())).PadLeft(256)}
 }
 
 func randType () *fiddle.Bits {
@@ -19,8 +19,8 @@ func randType () *fiddle.Bits {
 
 func TestDecoder (T *testing.T) {
     for i := 0; i < 1000; i++ {
-        id  := randId()
-        id2 := decode(encode(id)).(*Id)
+        id  := randId1()
+        id2 := decode(encode(id)).(*Id1)
         if !id2.Dat.Equal(id.Dat) { T.FailNow() }
     }
 }

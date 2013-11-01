@@ -33,31 +33,31 @@ func DecodeNil (typ *fiddle.Bits, dat *fiddle.Bits) Any {
 }
 
 /*************
-***   Id   ***
+***   Id1   ***
 *************/
 
 var ID = fiddle.FromRawHex("823f70579c7a29bf")
-func init () { AddType(ID, EncodeId, DecodeId) }
+func init () { AddType(ID, EncodeId1, DecodeId1) }
 
-type Id struct {
+type Id1 struct {
     Dat *fiddle.Bits
 }
 
-func (id *Id) String () string {
-    return "<Id:"+id.Dat.RawHex()+">"
+func (id *Id1) String () string {
+    return "<Id1:"+id.Dat.RawHex()+">"
 }
 
-func (id *Id) Equal (id2 *Id) bool {
+func (id *Id1) Equal (id2 *Id1) bool {
     return id.Dat.Equal(id2.Dat)
 }
 
-func EncodeId (val Any) *fiddle.Bits {
-    id := val.(*Id)
+func EncodeId1 (val Any) *fiddle.Bits {
+    id := val.(*Id1)
     return ID.Plus(id.Dat)
 }
 
-func DecodeId (typ *fiddle.Bits, dat *fiddle.Bits) Any {
-    return &Id{dat}
+func DecodeId1 (typ *fiddle.Bits, dat *fiddle.Bits) Any {
+    return &Id1{dat}
 }
 
 /******************
@@ -68,7 +68,7 @@ var MESSAGE = fiddle.FromRawHex("83b10ff1ecf79c0b")
 func init () { AddType(MESSAGE, EncodeMessage, DecodeMessage) }
 
 type Message struct {
-    To  *Id
+    To  *Id1
     Dat *fiddle.Bits
 }
 
@@ -83,7 +83,7 @@ func EncodeMessage (val Any) *fiddle.Bits {
 
 func DecodeMessage (typ *fiddle.Bits, dat *fiddle.Bits) Any {
     c := dat.Chunks(2)
-    return &Message{decode(c[0]).(*Id), c[1]}
+    return &Message{decode(c[0]).(*Id1), c[1]}
 }
 
 /******************
@@ -134,22 +134,22 @@ var UDPSUB = fiddle.FromRawHex("D9EB4EACD263ECFD")
 func init () { AddType(UDPSUB, EncodeUdpSub, DecodeUdpSub) }
 
 type UdpSub struct {
-    Id   *Id
+    Id1   *Id1
     Addr *UdpAddrStr
 }
 
 func (sub *UdpSub) String () string {
-    return "<UdpSub:"+sub.Id.String()+","+sub.Addr.String()+">"
+    return "<UdpSub:"+sub.Id1.String()+","+sub.Addr.String()+">"
 }
 
 func EncodeUdpSub (val Any) *fiddle.Bits {
     sub := val.(*UdpSub)
-    return UDPSUB.Plus(fiddle.FromChunks(encode(sub.Id), encode(sub.Addr)))
+    return UDPSUB.Plus(fiddle.FromChunks(encode(sub.Id1), encode(sub.Addr)))
 }
 
 func DecodeUdpSub (typ *fiddle.Bits, dat *fiddle.Bits) Any {
     c := dat.Chunks(2)
-    return &UdpSub{decode(c[0]).(*Id), decode(c[1]).(*UdpAddrStr)}
+    return &UdpSub{decode(c[0]).(*Id1), decode(c[1]).(*UdpAddrStr)}
 }
 
 /**************
@@ -160,7 +160,7 @@ var BOX = fiddle.FromRawHex("5946F91D56354917")
 func init () { AddType(BOX, EncodeBox, DecodeBox) }
 
 type Box struct {
-    Key *Id
+    Key *Id1
     Dat *fiddle.Bits
 }
 
@@ -175,7 +175,7 @@ func EncodeBox (val Any) *fiddle.Bits {
 
 func DecodeBox (typ *fiddle.Bits, dat *fiddle.Bits) Any {
     c := dat.Chunks(2)
-    return &Box{decode(c[0]).(*Id), c[1]}
+    return &Box{decode(c[0]).(*Id1), c[1]}
 }
 
 /******************
@@ -185,6 +185,7 @@ func DecodeBox (typ *fiddle.Bits, dat *fiddle.Bits) Any {
 // Asymmetric: RSA (any key size)
 // Symmetric:  AES 256 CFB
 // Padding:    OAEP SHA-1
+// Id1 Hash:   SHA 256
 
 var PUBKEY1 = fiddle.FromRawHex("A7F3D2EE90717395")
 func init () { AddType(PUBKEY1, EncodePubKey1, DecodePubKey1) }
