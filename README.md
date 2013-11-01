@@ -1,6 +1,6 @@
 # Babel
 
-Babel is a Go utility library for the Vita protocol.
+Babel is a Go utility library for the [Vita](https://github.com/Calder/Vita) protocol.
 
 ## Coding
 
