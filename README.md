@@ -16,5 +16,5 @@ Babel is a Go utility library for the [Vita](https://github.com/Calder/Vita) pro
 
 ## Network
 
-* **Send(toId,message)**
-* **Receive(toId,callback)**
+* **Send(to,packet)**
+* **Receive(to,callback)**
