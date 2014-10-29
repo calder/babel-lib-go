@@ -1,31 +1,48 @@
+// An Id1 is the first 128 bits of the SHA-256 hash of a public key.
+
 package babel
 
-import "github.com/calder/fiddle"
+import "bytes"
+import "encoding/hex"
+import "errors"
+import "strconv"
 
-/**************
-***   Id1   ***
-**************/
-
-var ID = fiddle.FromRawHex("823f70579c7a29bf")
-func init () { AddType(ID, EncodeId1, DecodeId1) }
+var ID1 = Tag("823f7057")
+func init () { AddType(ID1, DecodeId1) }
 
 type Id1 struct {
-    Dat *fiddle.Bits
+    data [16]byte
+}
+
+func (id* Id1) Data () []byte {
+    return id.data[:]
 }
 
 func (id *Id1) String () string {
-    return "<Id1:"+id.Dat.RawHex()+">"
+    return "<Id1:"+hex.EncodeToString(id.Data())+">"
 }
 
-func (id *Id1) Equal (id2 *Id1) bool {
-    return id.Dat.Equal(id2.Dat)
+func (id *Id1) Encode () []byte {
+    return Join(ID1, id.Data())
 }
 
-func EncodeId1 (val Any) *fiddle.Bits {
-    id := val.(*Id1)
-    return ID.Plus(id.Dat)
+func DecodeId1 (data []byte) (res Any, err error) {
+    if len(data) != 16 {
+        return nil, errors.New("invalid length for Id1: "+strconv.Itoa(len(data)))
+    }
+
+    id := &Id1{}
+    copy(id.data[:], data)
+    return id, nil
 }
 
-func DecodeId1 (typ *fiddle.Bits, dat *fiddle.Bits) Any {
-    return &Id1{dat}
+func (id *Id1) Equal (other *Id1) bool {
+    return bytes.Equal(id.Data(), other.Data())
+}
+
+func (id *Id1) EqualAny (other Any) bool {
+    switch other := other.(type) {
+        case *Id1: return id.Equal(other)
+        default: return false
+    }
 }
