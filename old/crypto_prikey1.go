@@ -7,14 +7,9 @@ import "crypto/rsa"
 import "crypto/sha1"
 import "math/big"
 import "strconv"
-import "github.com/calder/fiddle"
 
-/******************
-***   PriKey1   ***
-******************/
-
-var PRIKEY1 = fiddle.FromRawHex("D4B1E1B24361AFAF")
-func init () { AddType(PRIKEY1, EncodePriKey1, DecodePriKey1) }
+var PRIKEY1 = Tag("D4B1E1B2")
+func init () { AddType(PRIKEY1, DecodePriKey1) }
 
 type PriKey1 struct {
     Key *rsa.PrivateKey
@@ -28,9 +23,8 @@ func (key *PriKey1) String () string {
     return s
 }
 
-func EncodePriKey1 (val Any) *fiddle.Bits {
-    key := val.(*PriKey1)
-    primes := make([]*fiddle.Bits, len(key.Key.Primes))
+func (key *PriKey1) Encode () []byte {
+    primes := make([][]byte, len(key.Key.Primes))
     for i, p := range key.Key.Primes { primes[i] = fiddle.FromBigInt(p) }
     ps := fiddle.FromList(primes)
     d  := fiddle.FromBigInt(key.Key.D)
@@ -38,7 +32,7 @@ func EncodePriKey1 (val Any) *fiddle.Bits {
     return PRIKEY1.Plus(fiddle.FromChunks(ps, d, e))
 }
 
-func DecodePriKey1 (typ *fiddle.Bits, dat *fiddle.Bits) Any {
+func DecodePriKey1 (dat []byte) Any {
     c := dat.Chunks(3)
     ps := c[0].List()
     primes := make([]*big.Int, len(ps))
@@ -64,7 +58,7 @@ func (key *PriKey1) Pub () *PubKey1 {
     return &PubKey1{&key.Key.PublicKey}
 }
 
-func (key *PriKey1) Decrypt (dat *fiddle.Bits) *fiddle.Bits {
+func (key *PriKey1) Decrypt (dat []byte) []byte {
     // Break up the message chunks
     c := dat.Chunks(2)
     cipherKey := c[0].RawBytes()

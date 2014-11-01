@@ -3,7 +3,7 @@ package babel
 import "testing"
 
 func TestBox (T *testing.T) {
-    for i := 0; i < 1000; i++ {
+    for i := 0; i < 100; i++ {
         key := randId1()
         dat := randBits()
         en  := EncodeBox(&Box{key,dat})
