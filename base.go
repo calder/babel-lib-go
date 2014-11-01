@@ -40,42 +40,6 @@ func Decode (data []byte) (res Any, err error) {
     return decoder(dat)
 }
 
-// func FirstRune (bytes []byte) (rune []byte, err error) {
-//     if len(bytes) == 0 { return nil, errors.New("expected non-empty slice") }
-
-//     var byteLen = 0
-//     for byteLen < len(bytes) && bytes[byteLen] & byte(128) != 0 {
-//         byteLen++
-//     }
-//     byteLen++
-//     if byteLen > len(bytes) { return nil, errors.New("rune length > slice length") }
-
-//     var runeLen = (byteLen * 7 + 7) / 8
-//     var offset = byteLen%8
-//     rune = make([]byte, runeLen)
-
-//     for i := 0; i < byteLen; i++ {
-//         var start = offset + i * 7
-//         var end = start + 6
-
-//         // Copy most significant bits
-//         // println("Copying byte", i, "to bits", start, "through", end)
-//         rune[start/8] |= (bytes[i] & 127) >> uint(start % 8 - 1)
-//         // println(hex.EncodeToString(rune))
-
-//         // Copy least significant bits
-//         if end/8 > start/8 {
-//             // println("Copying second part", uint(7-end % 8))
-//             rune[end/8] |= (bytes[i] & 127) << uint(7 - end % 8)
-//             // println(hex.EncodeToString(rune))
-//         }
-
-//         // println()
-//     }
-
-//     return rune, nil
-// }
-
 func FirstRuneLen (bytes []byte) (length int, err error) {
     if len(bytes) == 0 { return -1, errors.New("rune must be at least one byte long") }
 

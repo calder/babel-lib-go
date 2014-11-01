@@ -7,13 +7,16 @@ import "math/rand"
 import "testing"
 
 func TestRandRune (T *testing.T) {
-    for t := 0; t < 1000; t++ {
+    for t := 0; t < 100; t++ {
         var rune = RandRune(1 + rand.Intn(10))
         var _, e = FirstRuneLen(rune)
 
+        if e == nil && !IsRune(rune) {
+            e = errors.New("invalid rune")
+        }
+
         if !IsRune(rune) {
-            T.Log("Error: ", "RandRune() generated an invalid rune")
-            T.Log("       ", e)
+            T.Log("Error: ", e)
             T.Log("Output:", hex.EncodeToString(rune))
             T.FailNow()
         }
