@@ -7,7 +7,7 @@ import "encoding/hex"
 import "errors"
 import "strconv"
 
-var ID1 = Tag("823f7057")
+var ID1 = Tag("F7A98013")
 func init () { AddType(ID1, DecodeId1) }
 
 type Id1 struct {

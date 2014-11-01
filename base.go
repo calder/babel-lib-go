@@ -3,8 +3,6 @@ package babel
 import "encoding/hex"
 import "errors"
 
-var tagSize = 4 // TODO: implement dynamic tag sizes
-
 var decoders = make(map[string]DecoderFunc)
 
 type Any interface{}
@@ -28,10 +26,11 @@ func Join (a, b []byte) []byte {
 }
 
 func Decode (data []byte) (res Any, err error) {
-    if len(data) < tagSize { return nil, errors.New("missing type signature") }
+    var typ, e = FirstRune(data)
 
-    var typ = data[:tagSize]
-    var dat = data[tagSize:]
+    if e != nil { return nil, errors.New("tag error:" + e.Error()) }
+
+    var dat = data[len(typ):]
     var decoder = decoders[hex.EncodeToString(typ)]
     if decoder == nil {
         return nil, errors.New("unknown type "+hex.EncodeToString(typ))

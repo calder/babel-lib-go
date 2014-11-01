@@ -15,7 +15,6 @@ func TestId1Encoding (T *testing.T) {
     for i := 0; i < 100; i++ {
         key := randId1()
         encoded := key.Encode()
-        T.Log(hex.EncodeToString(encoded))
         decoded, err := Decode(encoded)
         if err == nil && !key.EqualAny(decoded) {
             err = errors.New("decoded key != original")
