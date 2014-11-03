@@ -3,12 +3,12 @@ package babel
 import "encoding/hex"
 import "errors"
 
-var decoders = make(map[string]DecoderFunc)
+type Any interface {
+    Type () []byte
+    StringType () string
+}
 
-type Any interface{}
-type DecoderFunc func([]byte)(Any,error)
-
-func AddType (typ []byte, decoder DecoderFunc) {
+func AddType (typ []byte, decoder Decoder) {
     decoders[hex.EncodeToString(typ)] = decoder
 }
 
@@ -24,6 +24,10 @@ func Join (a, b []byte) []byte {
     copy(res[len(a):], b)
     return res
 }
+
+type Decoder func([]byte)(Any,error)
+
+var decoders = make(map[string]Decoder)
 
 func Decode (data []byte) (res Any, err error) {
     var typ, e = FirstRune(data)

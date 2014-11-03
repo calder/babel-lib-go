@@ -3,10 +3,6 @@ package babel
 import "errors"
 import "net"
 
-/************************
-***   Vita Over UDP   ***
-************************/
-
 func ReceiveUdp (addrStr string, maxPacketBytes int, handler PacketHandler, errorHandler ErrorHandler) (realAddr string, err error) {
     // Create UDP listener
     addr, e := net.ResolveUDPAddr("udp", addrStr)
