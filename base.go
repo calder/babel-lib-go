@@ -34,10 +34,10 @@ func Decode (data []byte) (res Any, err error) {
 
     if e != nil { return nil, errors.New("tag error:" + e.Error()) }
 
-    var dat = data[len(typ):]
-    var decoder = decoders[hex.EncodeToString(typ)]
+    var dat = data[typ.Len():]
+    var decoder = decoders[typ.RawString()]
     if decoder == nil {
-        return nil, errors.New("unknown type "+hex.EncodeToString(typ))
+        return nil, errors.New("unknown type "+typ.RawString())
     }
     return decoder(dat)
 }

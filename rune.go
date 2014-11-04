@@ -1,12 +1,56 @@
 package babel
 
+import "bytes"
 import "crypto/rand"
+import "encoding/hex"
 import "errors"
+
+type Rune struct {
+    data []byte
+}
+
+func NewRune (bytes []byte) (res *Rune, err error) {
+    for i := 0; i < len(bytes)-1; i++ {
+        if bytes[i] & 128 == 0 {
+            return nil, errors.New("invalid rune: inner byte continuation bit is 0")
+        }
+    }
+    if bytes[len(bytes)-1] & 128 != 0 {
+        return nil, errors.New("invalid rune: final byte continuation bit is 1")
+    }
+    return &Rune{bytes}, nil
+}
+
+func NewRuneUnsafe (bytes []byte) *Rune {
+    rune, e := NewRune(bytes)
+    if e != nil { panic(e) }
+    return rune
+}
+
+func (rune *Rune) Bytes () []byte {
+    return rune.data
+}
+
+func (rune *Rune) String () string {
+    return "<Rune:"+rune.RawString()+">"
+}
+
+func (rune *Rune) RawString () string {
+    return hex.EncodeToString(rune.data)
+}
+
+func (rune *Rune) Equal (other *Rune) bool {
+    return bytes.Equal(rune.data, other.data)
+}
+
+func (rune *Rune) Len () int {
+    return len(rune.data)
+}
 
 func FirstRuneLen (bytes []byte) (length int, err error) {
     if len(bytes) == 0 { return -1, errors.New("rune must be at least one byte long") }
 
-    var runeLen = 0
+    runeLen := 0
     for runeLen < len(bytes) && bytes[runeLen] & byte(128) != 0 {
         runeLen++
     }
@@ -16,21 +60,21 @@ func FirstRuneLen (bytes []byte) (length int, err error) {
     return runeLen, nil
 }
 
-func FirstRune (bytes []byte) (rune []byte, err error) {
-    var runeLen, e = FirstRuneLen(bytes)
+func FirstRune (bytes []byte) (res *Rune, err error) {
+    runeLen, e := FirstRuneLen(bytes)
     if e != nil { return nil, e }
-    return bytes[:runeLen], nil
+    return NewRuneUnsafe(bytes[:runeLen]), nil
 }
 
 func IsRune (bytes []byte) bool {
-    var runeLen, e = FirstRuneLen(bytes)
+    runeLen, e := FirstRuneLen(bytes)
     return e == nil && runeLen == len(bytes)
 }
 
-func RandRune (length int) []byte {
-    var rune = make([]byte, length)
-    rand.Read(rune)
-    for i := 0; i < length-1; i++ { rune[i] |= 128 }
-    rune[length-1] &= 127
-    return rune
+func RandRune (length int) *Rune {
+    data := make([]byte, length)
+    rand.Read(data)
+    for i := 0; i < length-1; i++ { data[i] |= 128 }
+    data[length-1] &= 127
+    return NewRuneUnsafe(data)
 }

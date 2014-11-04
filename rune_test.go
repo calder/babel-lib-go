@@ -1,23 +1,21 @@
 package babel
 
-import "bytes"
-import "encoding/hex"
 import "errors"
 import "math/rand"
 import "testing"
 
 func TestRandRune (T *testing.T) {
     for t := 0; t < 100; t++ {
-        var rune = RandRune(1 + rand.Intn(10))
-        var _, e = FirstRuneLen(rune)
+        rune := RandRune(1 + rand.Intn(10))
+        _, e := FirstRuneLen(rune.Bytes())
 
-        if e == nil && !IsRune(rune) {
+        if e == nil && !IsRune(rune.Bytes()) {
             e = errors.New("invalid rune")
         }
 
-        if !IsRune(rune) {
+        if !IsRune(rune.Bytes()) {
             T.Log("Error: ", e)
-            T.Log("Output:", hex.EncodeToString(rune))
+            T.Log("Output:", rune)
             T.FailNow()
         }
     }
@@ -25,29 +23,29 @@ func TestRandRune (T *testing.T) {
 
 func TestFirstRune (T *testing.T) {
     for t := 0; t < 100; t++ {
-        var runes = make([][]byte, 1 + rand.Int31n(10))
-        var concatenated = make([]byte, 0)
+        runes := make([]*Rune, 1 + rand.Int31n(10))
+        concatenated := make([]byte, 0)
         for i := 0; i < len(runes); i++ {
             runes[i] = RandRune(1 + i % 10)
-            concatenated = append(concatenated, runes[i]...)
+            concatenated = append(concatenated, runes[i].Bytes()...)
         }
 
         for i := 0; i < len(runes); i++ {
-            var rune, e = FirstRune(concatenated)
+            rune, e := FirstRune(concatenated)
 
-            if e == nil && !bytes.Equal(rune, runes[i]) {
+            if e == nil && !rune.Equal(runes[i]) {
                 e = errors.New("decoded rune != original")
             }
 
             if e != nil {
                 T.Log("Error:       ", e)
-                T.Log("Original:    ", hex.EncodeToString(runes[i]))
-                T.Log("Concatenated:", hex.EncodeToString(concatenated))
-                T.Log("Decoded:     ", hex.EncodeToString(rune))
+                T.Log("Original:    ", runes[i])
+                T.Log("Concatenated:", concatenated)
+                T.Log("Decoded:     ", rune)
                 T.FailNow()
             }
 
-            concatenated = concatenated[len(rune):]
+            concatenated = concatenated[rune.Len():]
         }
     }
 }
