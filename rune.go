@@ -9,7 +9,13 @@ type Rune struct {
     data []byte
 }
 
-func NewRune (bytes []byte) (res *Rune, err error) {
+func NewRune (bytes []byte) *Rune {
+    rune, e := NewRuneWithError(bytes)
+    if e != nil { panic(e) }
+    return rune
+}
+
+func NewRuneWithError (bytes []byte) (res *Rune, err error) {
     for i := 0; i < len(bytes)-1; i++ {
         if bytes[i] & 128 == 0 {
             return nil, errors.New("invalid rune: inner byte continuation bit is 0")
@@ -18,13 +24,11 @@ func NewRune (bytes []byte) (res *Rune, err error) {
     if bytes[len(bytes)-1] & 128 != 0 {
         return nil, errors.New("invalid rune: final byte continuation bit is 1")
     }
-    return &Rune{bytes}, nil
+    return NewRuneUnchecked(bytes), nil
 }
 
-func NewRuneUnsafe (bytes []byte) *Rune {
-    rune, e := NewRune(bytes)
-    if e != nil { panic(e) }
-    return rune
+func NewRuneUnchecked (bytes []byte) *Rune {
+    return &Rune{bytes}
 }
 
 func (rune *Rune) Bytes () []byte {
@@ -63,7 +67,7 @@ func FirstRuneLen (bytes []byte) (length int, err error) {
 func FirstRune (bytes []byte) (res *Rune, err error) {
     runeLen, e := FirstRuneLen(bytes)
     if e != nil { return nil, e }
-    return NewRuneUnsafe(bytes[:runeLen]), nil
+    return NewRuneUnchecked(bytes[:runeLen]), nil
 }
 
 func IsRune (bytes []byte) bool {
@@ -76,5 +80,5 @@ func RandRune (length int) *Rune {
     rand.Read(data)
     for i := 0; i < length-1; i++ { data[i] |= 128 }
     data[length-1] &= 127
-    return NewRuneUnsafe(data)
+    return NewRuneUnchecked(data)
 }

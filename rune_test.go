@@ -49,3 +49,23 @@ func TestFirstRune (T *testing.T) {
         }
     }
 }
+
+var rune1 = RandRune(1)
+var rune2 = RandRune(2)
+var rune4 = RandRune(4)
+var rune8 = RandRune(8)
+
+func BenchmarkNewRune1 (B *testing.B) { for t := 0; t < B.N; t++ { NewRune(rune1.Bytes()) } }
+func BenchmarkNewRune2 (B *testing.B) { for t := 0; t < B.N; t++ { NewRune(rune2.Bytes()) } }
+func BenchmarkNewRune4 (B *testing.B) { for t := 0; t < B.N; t++ { NewRune(rune4.Bytes()) } }
+func BenchmarkNewRune8 (B *testing.B) { for t := 0; t < B.N; t++ { NewRune(rune8.Bytes()) } }
+
+func BenchmarkNewRuneUnchecked1 (B *testing.B) { for t := 0; t < B.N; t++ { NewRuneUnchecked(rune1.Bytes()) } }
+func BenchmarkNewRuneUnchecked2 (B *testing.B) { for t := 0; t < B.N; t++ { NewRuneUnchecked(rune2.Bytes()) } }
+func BenchmarkNewRuneUnchecked4 (B *testing.B) { for t := 0; t < B.N; t++ { NewRuneUnchecked(rune4.Bytes()) } }
+func BenchmarkNewRuneUnchecked8 (B *testing.B) { for t := 0; t < B.N; t++ { NewRuneUnchecked(rune8.Bytes()) } }
+
+func BenchmarkRandRune1 (B *testing.B) { for t := 0; t < B.N; t++ { RandRune(1) } }
+func BenchmarkRandRune2 (B *testing.B) { for t := 0; t < B.N; t++ { RandRune(2) } }
+func BenchmarkRandRune4 (B *testing.B) { for t := 0; t < B.N; t++ { RandRune(4) } }
+func BenchmarkRandRune8 (B *testing.B) { for t := 0; t < B.N; t++ { RandRune(8) } }
