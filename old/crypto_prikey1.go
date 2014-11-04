@@ -1,3 +1,5 @@
+// A PriKey1 is a 2048 bit RSA key.
+
 package babel
 
 import "crypto/aes"
@@ -8,7 +10,10 @@ import "crypto/sha1"
 import "math/big"
 import "strconv"
 
-var PRIKEY1 = Tag("D4B1E1B2")
+var PRIKEY1_STRING = "CBB6A416"
+var PRIKEY1 = Tag(PRIKEY1_STRING)
+func (*PriKey1) Type () []byte { return PRIKEY1 }
+func (*PriKey1) StringType () string { return PRIKEY1_STRING }
 func init () { AddType(PRIKEY1, DecodePriKey1) }
 
 type PriKey1 struct {
