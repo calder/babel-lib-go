@@ -4,7 +4,7 @@
 // The last seven bits of each byte are the value, least significant byte first.
 //     1******* 1******* 1******* 0*******
 //      ^^^^^^^  ^^^^^^^  ^^^^^^^  ^^^^^^^
-//   bits 22-28   15-21    7-14      0-6
+//  bits 22-28    15-21    7-14      0-6
 
 package babel
 

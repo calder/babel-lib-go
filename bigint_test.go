@@ -2,12 +2,14 @@ package babel
 
 import "encoding/hex"
 import "errors"
+import "math/big"
 import "math/rand"
 import "testing"
 
-func TestVarIntEncoding (T *testing.T) {
+func TestBigIntEncoding (T *testing.T) {
     for i := 0; i < 100; i++ {
-        original := NewVarInt(uint64(rand.Int63()))
+        original := NewBigInt(big.NewInt(int64(rand.Int63())))
+        original.Data.Mul(original.Data, big.NewInt(int64(rand.Int63())))
         encoded := original.Encode()
         decoded, e := Decode(encoded)
 
