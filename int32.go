@@ -8,8 +8,8 @@ import "errors"
 import "strconv"
 
 var INT32_STRING = "B5D7B812"
-var INT32 = Tag(INT32_STRING)
-func (*Int32) Type () []byte { return INT32 }
+var INT32 = NewTypeFromHex(INT32_STRING)
+func (*Int32) Type () *Type { return INT32 }
 func (*Int32) StringType () string { return INT32_STRING }
 func init () { AddType(INT32, DecodeInt32) }
 
@@ -32,7 +32,7 @@ func (x *Int32) String () string {
 func (x *Int32) Encode () []byte {
     buf := new(bytes.Buffer)
     binary.Write(buf, binary.BigEndian, x.data)
-    return Join(INT32, buf.Bytes())
+    return INT32.Wrap(buf.Bytes())
 }
 
 func DecodeInt32 (data []byte) (res Any, err error) {

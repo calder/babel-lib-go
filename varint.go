@@ -13,8 +13,8 @@ import "strconv"
 import "code.google.com/p/goprotobuf/proto"
 
 var VARINT_STRING = "B5D7B812"
-var VARINT = Tag(VARINT_STRING)
-func (*VarInt) Type () []byte { return VARINT }
+var VARINT = NewTypeFromHex(VARINT_STRING)
+func (*VarInt) Type () *Type { return VARINT }
 func (*VarInt) StringType () string { return VARINT_STRING }
 func init () { AddType(VARINT, DecodeVarInt) }
 
@@ -35,7 +35,7 @@ func (x *VarInt) RawString () string {
 }
 
 func (x *VarInt) Encode () []byte {
-    return Join(VARINT, x.RawEncode())
+    return VARINT.Wrap(x.RawEncode())
 }
 
 func (x *VarInt) RawEncode () []byte {

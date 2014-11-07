@@ -11,7 +11,7 @@ import "math/big"
 import "strconv"
 
 var PRIKEY1_STRING = "CBB6A416"
-var PRIKEY1 = Tag(PRIKEY1_STRING)
+var PRIKEY1 = Type(PRIKEY1_STRING)
 func (*PriKey1) Type () []byte { return PRIKEY1 }
 func (*PriKey1) StringType () string { return PRIKEY1_STRING }
 func init () { AddType(PRIKEY1, DecodePriKey1) }

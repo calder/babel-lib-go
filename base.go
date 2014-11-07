@@ -1,21 +1,14 @@
 package babel
 
-import "encoding/hex"
 import "errors"
 
 type Any interface {
-    Type () []byte
+    Type () *Type
     StringType () string
 }
 
-func AddType (typ []byte, decoder Decoder) {
-    decoders[hex.EncodeToString(typ)] = decoder
-}
-
-func Tag (s string) []byte {
-    var res, e = hex.DecodeString(s)
-    if (e != nil) { panic(e) }
-    return res
+func AddType (t *Type, decoder Decoder) {
+    decoders[t.Hex()] = decoder
 }
 
 func Join (a, b []byte) []byte {
@@ -30,14 +23,14 @@ type Decoder func([]byte)(Any,error)
 var decoders = make(map[string]Decoder)
 
 func Decode (data []byte) (res Any, err error) {
-    var typ, e = FirstRune(data)
+    var t, e = FirstType(data)
 
-    if e != nil { return nil, errors.New("tag error:" + e.Error()) }
+    if e != nil { return nil, errors.New("type error:" + e.Error()) }
 
-    var dat = data[typ.Len():]
-    var decoder = decoders[typ.RawString()]
+    var dat = data[t.Len():]
+    var decoder = decoders[t.RawString()]
     if decoder == nil {
-        return nil, errors.New("unknown type "+typ.RawString())
+        return nil, errors.New("unknown type "+t.RawString())
     }
     return decoder(dat)
 }
