@@ -1,8 +1,16 @@
-// A variable length integer.
+// A protobuf compatible variable length integer.
+// 
+// The first bit of each byte determines whether to read the next byte.
+// The last seven bits of each byte are the value, least significant byte first.
+//     1******* 1******* 1******* 0*******
+//      ^^^^^^^  ^^^^^^^  ^^^^^^^  ^^^^^^^
+//   bits 22-28   15-21    7-14      0-6
 
 package babel
 
-import "math/big"
+import "errors"
+import "strconv"
+import "code.google.com/p/goprotobuf/proto"
 
 var VARINT_STRING = "B5D7B812"
 var VARINT = Tag(VARINT_STRING)
@@ -11,29 +19,37 @@ func (*VarInt) StringType () string { return VARINT_STRING }
 func init () { AddType(VARINT, DecodeVarInt) }
 
 type VarInt struct {
-    Data *big.Int
+    Data uint64
 }
 
-func NewVarInt (value int) *VarInt {
-    return &VarInt{big.NewInt(int64(value))}
+func NewVarInt (value uint64) *VarInt {
+    return &VarInt{value}
 }
 
 func (x *VarInt) String () string {
-    return "<VarInt:"+x.Data.String()+">"
+    return "<VarInt:"+x.RawString()+">"
+}
+
+func (x *VarInt) RawString () string {
+    return strconv.FormatUint(x.Data, 10)
 }
 
 func (x *VarInt) Encode () []byte {
-    return Join(VARINT, x.Data.Bytes())
+    return Join(VARINT, x.RawEncode())
+}
+
+func (x *VarInt) RawEncode () []byte {
+    return proto.EncodeVarint(x.Data)
 }
 
 func DecodeVarInt (data []byte) (res Any, err error) {
-    x := NewVarInt(0)
-    x.Data.SetBytes(data)
-    return x, nil
+    x, n := proto.DecodeVarint(data)
+    if n == 0 { return nil, errors.New("ran out of bytes while parsing varint") }
+    return NewVarInt(x), nil
 }
 
 func (x *VarInt) Equal (other *VarInt) bool {
-    return x.Data.Cmp(other.Data) == 0
+    return x.Data == other.Data
 }
 
 func (x *VarInt) EqualAny (other Any) bool {

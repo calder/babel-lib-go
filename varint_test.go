@@ -1,17 +1,12 @@
 package babel
 
 import "errors"
-import "math"
-import "math/big"
+import "math/rand"
 import "testing"
 
 func TestVarIntEncoding (T *testing.T) {
     for i := 0; i < 100; i++ {
-        x := big.NewInt(math.MaxInt64)
-        y := big.NewInt(math.MaxInt64)
-        original := NewVarInt(0)
-        original.Data.Mul(x,y)
-
+        original := NewVarInt(uint64(rand.Int63()))
         encoded := original.Encode()
         decoded, e := Decode(encoded)
 
