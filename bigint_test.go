@@ -10,7 +10,7 @@ func TestBigIntEncoding (T *testing.T) {
     for i := 0; i < 100; i++ {
         original := NewBigInt(big.NewInt(int64(rand.Int63())))
         original.Data.Mul(original.Data, big.NewInt(int64(rand.Int63())))
-        encoded := original.Encode()
+        encoded := original.Encode(TYPE)
         decoded, e := Decode(encoded)
 
         if e == nil && !original.EqualAny(decoded) {

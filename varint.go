@@ -8,53 +8,68 @@
 
 package babel
 
-import "errors"
-import "strconv"
+// import "errors"
+// import "strconv"
 import "code.google.com/p/goprotobuf/proto"
 
-var VARINT_STRING = "B5D7B812"
-var VARINT = NewTypeFromHex(VARINT_STRING)
-func (*VarInt) Type () *Type { return VARINT }
-func (*VarInt) StringType () string { return VARINT_STRING }
-func init () { AddType(VARINT, DecodeVarInt) }
-
-type VarInt struct {
-    Data uint64
+func Varint (n uint64) []byte {
+    return proto.EncodeVarint(n)
 }
 
-func NewVarInt (value uint64) *VarInt {
-    return &VarInt{value}
+func FirstVarint (data []byte) (x uint64, n int) {
+    return proto.DecodeVarint(data)
 }
 
-func (x *VarInt) String () string {
-    return "<VarInt:"+x.RawString()+">"
-}
+// var VARINT_STRING = "B5D7B812"
+// var VARINT = NewTypeFromHex(VARINT_STRING)
+// func (*VarInt) Type () *Type { return VARINT }
+// func (*VarInt) StringType () string { return VARINT_STRING }
+// func init () { AddType(VARINT, DecodeVarInt) }
 
-func (x *VarInt) RawString () string {
-    return strconv.FormatUint(x.Data, 10)
-}
+// type VarInt struct {
+//     Data uint64
+// }
 
-func (x *VarInt) Encode () []byte {
-    return VARINT.Wrap(x.RawEncode())
-}
+// func NewVarInt (value uint64) *VarInt {
+//     return &VarInt{value}
+// }
 
-func (x *VarInt) RawEncode () []byte {
-    return proto.EncodeVarint(x.Data)
-}
+// func (x *VarInt) String () string {
+//     return "<VarInt:"+x.RawString()+">"
+// }
 
-func DecodeVarInt (data []byte) (res Any, err error) {
-    x, n := proto.DecodeVarint(data)
-    if n == 0 { return nil, errors.New("ran out of bytes while parsing varint") }
-    return NewVarInt(x), nil
-}
+// func (x *VarInt) RawString () string {
+//     return strconv.FormatUint(x.Data, 10)
+// }
 
-func (x *VarInt) Equal (other *VarInt) bool {
-    return x.Data == other.Data
-}
+// func (x *VarInt) Encode () []byte {
+//     return VARINT.Wrap(x.RawEncode())
+// }
 
-func (x *VarInt) EqualAny (other Any) bool {
-    switch other := other.(type) {
-        case *VarInt: return x.Equal(other)
-        default: return false
-    }
-}
+// func (x *VarInt) RawEncode () []byte {
+//     return proto.EncodeVarint(x.Data)
+// }
+
+// func DecodeVarInt (data []byte) (res Any, err error) {
+//     x, n, e := FirstVarInt(data)
+//     if e != nil { return nil, e }
+//     if n < len(data) { return nil, nil, errors.New("extra bytes after varint") }
+//     return x, nil
+// }
+
+// func FirstVarInt (data []byte) (res *VarInt, n int, err error) {
+//     x, n := proto.DecodeVarint(data)
+//     if n == 0 { return nil, errors.New("ran out of bytes while parsing varint") }
+//     return NewVarInt(x), nil
+// }
+
+// func (x *VarInt) Equal (other *VarInt) bool {
+//     return x.Data == other.Data
+// }
+
+// func (x *VarInt) EqualAny (other Any) bool {
+//     switch other := other.(type) {
+//         case *VarInt: return x.Equal(other)
+//         default: return false
+//     }
+// }

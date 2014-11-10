@@ -14,7 +14,7 @@ func randId1 () *Id1 {
 func TestId1Encoding (T *testing.T) {
     for i := 0; i < 100; i++ {
         key := randId1()
-        encoded := key.Encode()
+        encoded := key.Encode(TYPE)
         decoded, err := Decode(encoded)
         if err == nil && !key.EqualAny(decoded) {
             err = errors.New("decoded key != original")

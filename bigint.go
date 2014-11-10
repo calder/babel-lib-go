@@ -4,7 +4,6 @@ package babel
 
 import "errors"
 import "math/big"
-import "code.google.com/p/goprotobuf/proto"
 
 var BIGINT_STRING = "8DA78674"
 var BIGINT = NewTypeFromHex(BIGINT_STRING)
@@ -28,19 +27,21 @@ func (x *BigInt) RawString () string {
     return x.Data.String()
 }
 
-func (x *BigInt) Encode () []byte {
-    d := x.Data.Bytes()
-    l := proto.EncodeVarint(uint64(len(d)))
-    return BIGINT.Wrap(Join(l, d))
+func (x *BigInt) Encode (enc Encoding) []byte {
+    return Wrap(enc, BIGINT, x.Data.Bytes())
 }
 
 func DecodeBigInt (data []byte) (res Any, err error) {
-    l, n := proto.DecodeVarint(data)
-    if n == 0 { return nil, errors.New("ran out of bytes while parsing bigint length") }
-    if int(l) > len(data) - n { return nil, errors.New("length > remaining bytes") }
+    r, n, e := ReadBigInt(data)
+    if e != nil { return nil, e }
+    if n < len(data) { return nil, errors.New("leftover bytes after parsing bigint") }
+    return r, e
+}
+
+func ReadBigInt (data []byte) (res *BigInt, n int, err error) {
     x := NewBigInt(big.NewInt(0))
-    x.Data.SetBytes(data[n:n+int(l)])
-    return x, nil
+    x.Data.SetBytes(data)
+    return x, len(data), nil
 }
 
 func (x *BigInt) Equal (other *BigInt) bool {

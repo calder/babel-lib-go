@@ -25,8 +25,8 @@ func (id *Id1) String () string {
     return "<Id1:"+hex.EncodeToString(id.Data())+">"
 }
 
-func (id *Id1) Encode () []byte {
-    return ID1.Wrap(id.Data())
+func (id *Id1) Encode (enc Encoding) []byte {
+    return Wrap(enc, ID1, id.Data())
 }
 
 func DecodeId1 (data []byte) (res Any, err error) {

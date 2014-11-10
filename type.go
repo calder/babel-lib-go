@@ -64,10 +64,6 @@ func (t *Type) Len () int {
     return len(t.data)
 }
 
-func (t *Type) Wrap (data []byte) []byte {
-    return Join(t.data, data)
-}
-
 func FirstTypeLen (bytes []byte) (length int, err error) {
     if len(bytes) == 0 { return -1, errors.New("t must be at least one byte long") }
 
