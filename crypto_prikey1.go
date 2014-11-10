@@ -15,7 +15,7 @@ var PRIKEY1_STRING = "A9BAEF32"
 var PRIKEY1 = NewTypeFromHex(PRIKEY1_STRING)
 func (*PriKey1) Type () *Type { return PRIKEY1 }
 func (*PriKey1) StringType () string { return PRIKEY1_STRING }
-func init () { AddType(PRIKEY1, DecodePriKey1) }
+func init () { AddType(PRIKEY1, decodePriKey1) }
 
 type PriKey1 struct {
     Key *rsa.PrivateKey
@@ -40,22 +40,23 @@ func (key *PriKey1) String () string {
 }
 
 func (key *PriKey1) Encode (enc Encoding) []byte {
-    numPrimes := Varint(uint64(len(key.Key.Primes)))
+    numPrimes := EncodeVarint(uint64(len(key.Key.Primes)))
 
     primes := make([][]byte, len(key.Key.Primes))
     for i, p := range key.Key.Primes {
         pb := p.Bytes()
-        primes[i] = Join(Varint(uint64(len(pb))), pb)
+        primes[i] = Join(EncodeVarint(uint64(len(pb))), pb)
     }
 
     d := NewBigInt(key.Key.D).Encode(RAW)
-    e := Varint(uint64(key.Key.PublicKey.E))
+    e := EncodeVarint(uint64(key.Key.PublicKey.E))
 
     return Wrap(enc, PRIKEY1, Join(numPrimes, Join(primes...), d, e))
 }
 
-func DecodePriKey1 (data []byte) (res Any, err error) {
-    x, n := FirstVarint(data)
+func decodePriKey1 (data []byte) (res Any, err error) { return DecodePriKey1(data) }
+func DecodePriKey1 (data []byte) (res *PriKey1, err error) {
+    x, n := ReadVarint(data)
     if n == 0 { return nil, errors.New("error parsing number of primes") }
     numPrimes := int(x)
     data = data[n:]
@@ -69,7 +70,7 @@ func DecodePriKey1 (data []byte) (res Any, err error) {
 
     d, n, err := ReadBigInt(data); data = data[n:]
     if err != nil { return nil, errors.New("PLACEHOLDER") }
-    e, n := FirstVarint(data); data = data[n:]
+    e, n := ReadVarint(data); data = data[n:]
 
     if len(data) != 0 { return nil, errors.New("leftover bytes after parsing PRIKEY1") }
 

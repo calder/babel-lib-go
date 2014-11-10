@@ -9,7 +9,7 @@ var BIGINT_STRING = "8DA78674"
 var BIGINT = NewTypeFromHex(BIGINT_STRING)
 func (*BigInt) Type () *Type { return BIGINT }
 func (*BigInt) StringType () string { return BIGINT_STRING }
-func init () { AddType(BIGINT, DecodeBigInt) }
+func init () { AddType(BIGINT, decodeBigInt) }
 
 type BigInt struct {
     Data *big.Int
@@ -31,7 +31,8 @@ func (x *BigInt) Encode (enc Encoding) []byte {
     return Wrap(enc, BIGINT, x.Data.Bytes())
 }
 
-func DecodeBigInt (data []byte) (res Any, err error) {
+func decodeBigInt (data []byte) (res Any, err error) { return DecodeBigInt(data) }
+func DecodeBigInt (data []byte) (res *BigInt, err error) {
     r, n, e := ReadBigInt(data)
     if e != nil { return nil, e }
     if n < len(data) { return nil, errors.New("leftover bytes after parsing bigint") }

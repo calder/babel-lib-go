@@ -34,12 +34,12 @@ func Join (args ...[]byte) []byte {
 }
 
 type Encoding byte
-const RAW     = Encoding(0)
-const LEN     = Encoding(1) << 0
-const TYPE    = Encoding(1) << 1
+const RAW  = Encoding(0)
+const LEN  = Encoding(1 << 0)
+const TYPE = Encoding(1 << 1)
 
 func Wrap (enc Encoding, typ *Type, data []byte) []byte {
     if enc&TYPE>0 { data = Join(typ.data, data) }
-    if enc&LEN>0 { data = Join(Varint(uint64(len(data))), data) }
+    if enc&LEN>0 { data = Join(EncodeVarint(uint64(len(data))), data) }
     return data
 }

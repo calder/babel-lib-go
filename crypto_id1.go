@@ -11,7 +11,7 @@ var ID1_STRING = "F7A98013"
 var ID1 = NewTypeFromHex(ID1_STRING)
 func (*Id1) Type () *Type { return ID1 }
 func (*Id1) StringType () string { return ID1_STRING }
-func init () { AddType(ID1, DecodeId1) }
+func init () { AddType(ID1, decodeId1) }
 
 type Id1 struct {
     data [16]byte
@@ -29,7 +29,8 @@ func (id *Id1) Encode (enc Encoding) []byte {
     return Wrap(enc, ID1, id.Data())
 }
 
-func DecodeId1 (data []byte) (res Any, err error) {
+func decodeId1 (data []byte) (res Any, err error) { return DecodeId1(data) }
+func DecodeId1 (data []byte) (res *Id1, err error) {
     if len(data) != 16 {
         return nil, errors.New("invalid length for Id1: "+strconv.Itoa(len(data)))
     }
