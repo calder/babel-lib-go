@@ -2,11 +2,11 @@
 
 package babel
 
-// import "crypto/aes"
-// import "crypto/cipher"
+import "crypto/aes"
+import "crypto/cipher"
 import "crypto/rand"
 import "crypto/rsa"
-// import "crypto/sha1"
+import "crypto/sha1"
 import "errors"
 import "math/big"
 import "strconv"
@@ -26,7 +26,7 @@ func NewPriKey1 (key *rsa.PrivateKey) *PriKey1 {
 }
 
 func RandPriKey1 () *PriKey1 {
-    key, e := rsa.GenerateKey(rand.Reader, 4096)
+    key, e := rsa.GenerateKey(rand.Reader, 2048)
     if e != nil { panic(e) }
     return &PriKey1{key}
 }
@@ -106,31 +106,30 @@ func (key *PriKey1) Pub () *PubKey1 {
     return &PubKey1{&key.Key.PublicKey}
 }
 
-// func (key *PriKey1) Decrypt (dat []byte) []byte {
-//     // Break up the message chunks
-//     c := dat.Chunks(2)
-//     cipherKey := c[0].RawBytes()
-//     cipherText := c[1].RawBytes()
+func (key *PriKey1) Decrypt (data []byte) []byte {
+    // Break up the message chunks
+    cipherKey := data[:2048/8]
+    cipherText := data[2048/8:]
 
-//     // Decrypt session key
-//     plainKey, e := rsa.DecryptOAEP(sha1.New(), rand.Reader, key.Key, cipherKey, nil)
-//     if e != nil { panic(e) }
+    // Decrypt session key
+    plainKey, e := rsa.DecryptOAEP(sha1.New(), rand.Reader, key.Key, cipherKey, nil)
+    if e != nil { panic(e) }
 
-//     // Create the block cipher
-//     block, e := aes.NewCipher(plainKey)
-//     if e != nil { panic(e) }
+    // Create the block cipher
+    block, e := aes.NewCipher(plainKey)
+    if e != nil { panic(e) }
 
-//     // Read the 128-bit initialization vector
-//     iv := cipherText[:16]
-//     cipherText = cipherText[16:]
+    // Read the 128-bit initialization vector
+    iv := cipherText[:16]
+    cipherText = cipherText[16:]
 
-//     // Create the stream cipher
-//     stream := cipher.NewCFBDecrypter(block, iv)
+    // Create the stream cipher
+    stream := cipher.NewCFBDecrypter(block, iv)
 
-//     // Decrypt message
-//     plainText := make([]byte, len(cipherText))
-//     stream.XORKeyStream(plainText, cipherText)
+    // Decrypt message
+    plainText := make([]byte, len(cipherText))
+    stream.XORKeyStream(plainText, cipherText)
 
-//     // Decode the message
-//     return fiddle.FromBytes(plainText)
-// }
+    // Decode the message
+    return plainText
+}

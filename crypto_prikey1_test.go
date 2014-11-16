@@ -1,14 +1,11 @@
 package babel
 
-import "crypto/rand"
-import "crypto/rsa"
 import "encoding/hex"
 import "errors"
 import "testing"
 
-func TestPriKey1 (T *testing.T) {
-    key, _  := rsa.GenerateKey(rand.Reader, 256)
-    pri1    := &PriKey1{key}
+func TestPriKey1Encoding (T *testing.T) {
+    pri1    := RandPriKey1()
     encoded := pri1.Encode(RAW)
     pri2, e := DecodePriKey1(encoded)
 

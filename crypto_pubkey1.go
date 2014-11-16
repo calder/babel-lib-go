@@ -6,12 +6,12 @@
 
 package babel
 
-// import "io"
-// import "crypto/aes"
-// import "crypto/cipher"
-// import "crypto/rand"
+import "io"
+import "crypto/aes"
+import "crypto/cipher"
+import "crypto/rand"
 import "crypto/rsa"
-// import "crypto/sha1"
+import "crypto/sha1"
 import "crypto/sha256"
 import "errors"
 import "strconv"
@@ -66,36 +66,36 @@ func (key *PubKey1) Id1 () *Id1 {
     return NewId1(hash.Sum([]byte{})[:16])
 }
 
-// func (key *PubKey1) Encrypt (dat []byte) []byte {
-//     // Generate 256-bit session key
-//     plainKey := make([]byte, 256/8)
-//     _, e := io.ReadFull(rand.Reader, plainKey)
-//     if e != nil { panic(e) }
+func (key *PubKey1) Encrypt (plainText []byte) []byte {
+    // Generate 256-bit session key
+    plainKey := make([]byte, 256/8)
+    _, e := io.ReadFull(rand.Reader, plainKey)
+    if e != nil { panic(e) }
 
-//     // Encrypt the session key
-//     cipherKey, e := rsa.EncryptOAEP(sha1.New(), rand.Reader, key.Key, plainKey, nil)
-//     if e != nil { panic(e) }
+    // Encrypt the session key
+    cipherKey, e := rsa.EncryptOAEP(sha1.New(), rand.Reader, key.Key, plainKey, nil)
+    if e != nil { panic(e) }
 
-//     // Create the block cipher
-//     block, e := aes.NewCipher(plainKey)
-//     if e != nil { panic(e) }
+    // Create the block cipher
+    block, e := aes.NewCipher(plainKey)
+    if e != nil { panic(e) }
 
-//     // Generate 128-bit initialization vector
-//     iv := make([]byte, aes.BlockSize)
-//     _, e = io.ReadFull(rand.Reader, iv)
-//     if e != nil { panic(e) }
+    // Generate 128-bit initialization vector
+    iv := make([]byte, aes.BlockSize)
+    _, e = io.ReadFull(rand.Reader, iv)
+    if e != nil { panic(e) }
 
-//     // Create the stream cipher
-//     stream := cipher.NewCFBEncrypter(block, iv)
+    // Create the stream cipher
+    stream := cipher.NewCFBEncrypter(block, iv)
 
-//     // Encrypt the message
-//     plainText := dat.Bytes()
-//     cipherText := make([]byte, len(plainText))
-//     stream.XORKeyStream(cipherText, plainText)
+    // Encrypt the message
+    cipherText := make([]byte, len(plainText))
+    stream.XORKeyStream(cipherText, plainText)
 
-//     // Prepend the initialization vector
-//     cipherText = append(iv, cipherText...)
+    // Prepend the initialization vector
+    cipherText = append(iv, cipherText...)
 
-//     // Encode the message
-//     return fiddle.FromChunks(fiddle.FromRawBytes(cipherKey), fiddle.FromRawBytes(cipherText))
-// }
+    // Encode the message
+    println(len(cipherKey))
+    return Join(cipherKey, cipherText)
+}

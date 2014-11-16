@@ -1,14 +1,14 @@
 package babel
 
+import "bytes"
 import "crypto/rand"
-import "crypto/rsa"
 import "encoding/hex"
 import "errors"
 import "testing"
 
-func TestPubKey1 (T *testing.T) {
-    pri, _  := rsa.GenerateKey(rand.Reader, 256)
-    pub1    := &PubKey1{&pri.PublicKey}
+func TestPubKey1Encoding (T *testing.T) {
+    pri     := RandPriKey1()
+    pub1    := pri.Pub()
     encoded := pub1.Encode(RAW)
     pub2, e := DecodePubKey1(encoded)
 
@@ -21,6 +21,21 @@ func TestPubKey1 (T *testing.T) {
         T.Log("Key:    ", pub1)
         T.Log("Encoded:", hex.EncodeToString(encoded))
         T.Log("Decoded:", pub2)
+        T.FailNow()
+    }
+}
+
+func TestPubKey1Encryption (T *testing.T) {
+    pri := RandPriKey1()
+    pub := pri.Pub()
+
+    message := make([]byte, 1024)
+    rand.Read(message)
+
+    encrypted := pub.Encrypt(message)
+    decrypted := pri.Decrypt(encrypted)
+
+    if !bytes.Equal(message, decrypted) {
         T.FailNow()
     }
 }
