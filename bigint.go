@@ -33,16 +33,18 @@ func (x *BigInt) Encode (enc Encoding) []byte {
 
 func decodeBigInt (data []byte) (res Any, err error) { return DecodeBigInt(data) }
 func DecodeBigInt (data []byte) (res *BigInt, err error) {
-    r, n, e := ReadBigInt(data)
-    if e != nil { return nil, e }
-    if n < len(data) { return nil, errors.New("leftover bytes after parsing bigint") }
-    return r, e
+    x := NewBigInt(big.NewInt(0))
+    x.Data.SetBytes(data)
+    return x, nil
 }
 
 func ReadBigInt (data []byte) (res *BigInt, n int, err error) {
-    x := NewBigInt(big.NewInt(0))
-    x.Data.SetBytes(data)
-    return x, len(data), nil
+    l, ll := ReadVarint(data)
+    if ll == 0 { return nil, 0, errors.New("ran out of bytes while parsing length") }
+    end := ll + int(l)
+    if end > len(data) { return nil, 0, errors.New("ran out of bytes while parsing BIGINT") }
+    res, err = DecodeBigInt(data[ll:end])
+    return res, end, err
 }
 
 func (x *BigInt) Equal (other *BigInt) bool {

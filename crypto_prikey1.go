@@ -44,11 +44,10 @@ func (key *PriKey1) Encode (enc Encoding) []byte {
 
     primes := make([][]byte, len(key.Key.Primes))
     for i, p := range key.Key.Primes {
-        pb := p.Bytes()
-        primes[i] = Join(EncodeVarint(uint64(len(pb))), pb)
+        primes[i] = NewBigInt(p).Encode(LEN)
     }
 
-    d := NewBigInt(key.Key.D).Encode(RAW)
+    d := NewBigInt(key.Key.D).Encode(LEN)
     e := EncodeVarint(uint64(key.Key.PublicKey.E))
 
     return Wrap(enc, PRIKEY1, Join(numPrimes, Join(primes...), d, e))
@@ -56,27 +55,47 @@ func (key *PriKey1) Encode (enc Encoding) []byte {
 
 func decodePriKey1 (data []byte) (res Any, err error) { return DecodePriKey1(data) }
 func DecodePriKey1 (data []byte) (res *PriKey1, err error) {
-    x, n := ReadVarint(data)
+    x, n := ReadVarint(data); data = data[n:]
     if n == 0 { return nil, errors.New("error parsing number of primes") }
     numPrimes := int(x)
-    data = data[n:]
 
     primes := make([]*big.Int, numPrimes)
+    N := big.NewInt(1)
     for i := 0; i < numPrimes; i++ {
-        p, n, err := ReadBigInt(data); data = data[n:]
-        if err != nil { return nil, err }
-        primes[i] = p.Data
+        P, n, e := ReadBigInt(data); data = data[n:]
+        if e != nil { return nil, e }
+        primes[i] = P.Data
+        N.Mul(N, P.Data)
     }
 
-    d, n, err := ReadBigInt(data); data = data[n:]
-    if err != nil { return nil, errors.New("PLACEHOLDER") }
-    e, n := ReadVarint(data); data = data[n:]
+    D, n, e := ReadBigInt(data); data = data[n:]
+    if e != nil { return nil, e }
+    E, n := ReadVarint(data); data = data[n:]
 
     if len(data) != 0 { return nil, errors.New("leftover bytes after parsing PRIKEY1") }
 
-    pubKey := rsa.PublicKey{d.Data,int(e)}
-    priKey := &rsa.PrivateKey{PublicKey:pubKey, D:d.Data, Primes:primes}
+    pubKey := rsa.PublicKey{N:N,E:int(E)}
+    priKey := &rsa.PrivateKey{PublicKey:pubKey, D:D.Data, Primes:primes}
     return &PriKey1{priKey}, nil
+}
+
+func ReadPriKey1 (data []byte) (res *PriKey1, n int, err error) {
+    l, ll := ReadVarint(data)
+    if ll == 0 { return nil, 0, errors.New("ran out of bytes while parsing length") }
+    end := ll + int(l)
+    if end > len(data) { return nil, 0, errors.New("ran out of bytes while parsing PRIKEY1") }
+    res, err = DecodePriKey1(data[ll:end])
+    return res, end, err
+}
+
+func (key *PriKey1) Equal (other *PriKey1) bool {
+    for i, p := range key.Key.Primes {
+        if p.Cmp(other.Key.Primes[i]) != 0 { return false }
+    }
+    if key.Key.D.Cmp(other.Key.D) != 0 { return false }
+    if key.Key.PublicKey.N.Cmp(other.Key.PublicKey.N) != 0 { return false }
+    if key.Key.PublicKey.E != other.Key.PublicKey.E { return false }
+    return true
 }
 
 func (key *PriKey1) Id1 () *Id1 {
