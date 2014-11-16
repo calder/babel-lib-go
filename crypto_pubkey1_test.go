@@ -2,19 +2,24 @@ package babel
 
 import "crypto/rand"
 import "crypto/rsa"
+import "encoding/hex"
+import "errors"
 import "testing"
 
 func TestPubKey1 (T *testing.T) {
-    pri, _     := rsa.GenerateKey(rand.Reader, 1024)
-    pub        := &PubKey1{&pri.PublicKey}
-    encoded    := pub.Encode(RAW)
-    decoded, e := DecodePubKey1(encoded)
+    pri, _  := rsa.GenerateKey(rand.Reader, 1024)
+    pub1    := &PubKey1{&pri.PublicKey}
+    encoded := pub1.Encode(RAW)
+    pub2, e := DecodePubKey1(encoded)
 
-    if e == nil && decoded
+    if e == nil && !pub2.Equal(pub1) {
+        e = errors.New("decoded != original")
+    }
 
-    if pub2.Key.N.Cmp(pub.N) != 0 || pub2.Key.E != pub.E {
-        T.Log("Key:    ", pub)
-        T.Log("Encoded:", en)
+    if e != nil {
+        T.Log("Error:  ", e)
+        T.Log("Key:    ", pub1)
+        T.Log("Encoded:", hex.EncodeToString(encoded))
         T.Log("Decoded:", pub2)
         T.FailNow()
     }

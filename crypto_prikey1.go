@@ -1,4 +1,4 @@
-// A PriKey1 is a 2048 bit RSA key.
+// A PriKey1 is a 2048 bit RSA private key.
 
 package babel
 
@@ -81,7 +81,7 @@ func DecodePriKey1 (data []byte) (res *PriKey1, err error) {
 
 func ReadPriKey1 (data []byte) (res *PriKey1, n int, err error) {
     l, ll := ReadVarint(data)
-    if ll == 0 { return nil, 0, errors.New("ran out of bytes while parsing length") }
+    if ll == 0 { return nil, 0, errors.New("ran out of bytes while parsing PRIKEY1 length") }
     end := ll + int(l)
     if end > len(data) { return nil, 0, errors.New("ran out of bytes while parsing PRIKEY1") }
     res, err = DecodePriKey1(data[ll:end])

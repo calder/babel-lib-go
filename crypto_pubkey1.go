@@ -1,3 +1,9 @@
+// A PubKey1 is a 2048 bit RSA public key.
+//
+// Encryption specification:
+//     Symmetric:  AES 256 CFB
+//     Padding:    OAEP SHA-1
+
 package babel
 
 // import "io"
@@ -9,11 +15,6 @@ import "crypto/rsa"
 import "crypto/sha256"
 import "errors"
 import "strconv"
-
-// Asymmetric: RSA (any key size)
-// Symmetric:  AES 256 CFB
-// Padding:    OAEP SHA-1
-// Id1 Hash:   SHA 256
 
 var PUBKEY1_STRING = "D1E8A30F"
 var PUBKEY1 = NewTypeFromHex(PUBKEY1_STRING)
@@ -32,7 +33,7 @@ func (key *PubKey1) String () string {
 func (key *PubKey1) Encode (enc Encoding) []byte {
     E := EncodeVarint(uint64(key.Key.E))
     N := NewBigInt(key.Key.N).Encode(RAW)
-    return Wrap(enc, PUBKEY1, Join(N, E))
+    return Wrap(enc, PUBKEY1, Join(E, N))
 }
 
 func decodePubKey1 (data []byte) (res Any, err error) { return DecodePubKey1(data) }
@@ -42,6 +43,21 @@ func DecodePubKey1 (data []byte) (res *PubKey1, err error) {
     N, e := DecodeBigInt(data)
     if e != nil { return nil, e }
     return &PubKey1{&rsa.PublicKey{N:N.Data, E:int(E)}}, nil
+}
+
+func ReadPubKey1 (data []byte) (res *PubKey1, n int, err error) {
+    l, ll := ReadVarint(data)
+    if ll == 0 { return nil, 0, errors.New("ran out of bytes while parsing PUBKEY1 length") }
+    end := ll + int(l)
+    if end > len(data) { return nil, 0, errors.New("ran out of bytes while parsing PUBKEY1") }
+    res, err = DecodePubKey1(data[ll:end])
+    return res, end, err
+}
+
+func (key *PubKey1) Equal (other *PubKey1) bool {
+    if key.Key.N.Cmp(other.Key.N) != 0 { return false }
+    if key.Key.E != other.Key.E { return false }
+    return true
 }
 
 func (key *PubKey1) Id1 () *Id1 {
