@@ -1,20 +1,11 @@
-# Babel
+# babel-lib-go
 
-Babel is a Go utility library for the [Vita](https://github.com/Calder/Vita) protocol.
+`babel-lib-go` is a [Babel](https://docs.google.com/document/d/1B8_FC-u9iGq4RVdUB0VTxRnriBtdFCxIbqk3bhIdidU) utility library for the Go programming language.
 
-## Coding
+## Usage
 
-* **AddType(typeSig,encodeFunc,DecodeFunc)->bits**
-* **Encode(anything)->bits**
-* **Decode(bits)->anything**
+### Serialization
 
-## Crypto
+### Crypto
 
-* **PubKey.Encrypt(bits)->bits**
-* **PriKey.Decrypt(bits)->bits**
-* **PriKey.Pub()->PubKey**
-
-## Network
-
-* **Send(to,packet)**
-* **Receive(to,callback)**
+### Network
