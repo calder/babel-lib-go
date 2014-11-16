@@ -7,7 +7,7 @@ import "errors"
 import "testing"
 
 func TestPriKey1 (T *testing.T) {
-    key, _  := rsa.GenerateKey(rand.Reader, 1024)
+    key, _  := rsa.GenerateKey(rand.Reader, 256)
     pri1    := &PriKey1{key}
     encoded := pri1.Encode(RAW)
     pri2, e := DecodePriKey1(encoded)

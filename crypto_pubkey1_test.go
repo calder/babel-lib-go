@@ -7,7 +7,7 @@ import "errors"
 import "testing"
 
 func TestPubKey1 (T *testing.T) {
-    pri, _  := rsa.GenerateKey(rand.Reader, 1024)
+    pri, _  := rsa.GenerateKey(rand.Reader, 256)
     pub1    := &PubKey1{&pri.PublicKey}
     encoded := pub1.Encode(RAW)
     pub2, e := DecodePubKey1(encoded)
