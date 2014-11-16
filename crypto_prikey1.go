@@ -79,13 +79,13 @@ func DecodePriKey1 (data []byte) (res *PriKey1, err error) {
     return &PriKey1{priKey}, nil
 }
 
-// func (key *PriKey1) Id1 () *Id1 {
-//     return key.Pub().Id1()
-// }
+func (key *PriKey1) Id1 () *Id1 {
+    return key.Pub().Id1()
+}
 
-// func (key *PriKey1) Pub () *PubKey1 {
-//     return &PubKey1{&key.Key.PublicKey}
-// }
+func (key *PriKey1) Pub () *PubKey1 {
+    return &PubKey1{&key.Key.PublicKey}
+}
 
 // func (key *PriKey1) Decrypt (dat []byte) []byte {
 //     // Break up the message chunks

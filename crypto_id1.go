@@ -17,6 +17,15 @@ type Id1 struct {
     data [16]byte
 }
 
+func NewId1 (data []byte) *Id1 {
+    if len(data) != 16 {
+        panic(errors.New("invalid length for Id1: "+strconv.Itoa(len(data))))
+    }
+    id := &Id1{}
+    copy(id.data[:], data)
+    return id
+}
+
 func (id* Id1) Data () []byte {
     return id.data[:]
 }
@@ -34,10 +43,7 @@ func DecodeId1 (data []byte) (res *Id1, err error) {
     if len(data) != 16 {
         return nil, errors.New("invalid length for Id1: "+strconv.Itoa(len(data)))
     }
-
-    id := &Id1{}
-    copy(id.data[:], data)
-    return id, nil
+    return NewId1(data), nil
 }
 
 func (id *Id1) Equal (other *Id1) bool {
