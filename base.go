@@ -3,7 +3,7 @@ package babel
 import "bytes"
 import "errors"
 
-type Any interface {
+type Value interface {
     Type () *Type
     StringType () string
 }
@@ -12,11 +12,11 @@ func AddType (t *Type, decoder Decoder) {
     decoders[t.Hex()] = decoder
 }
 
-type Decoder func([]byte)(Any,error)
+type Decoder func([]byte)(Value,error)
 
 var decoders = make(map[string]Decoder)
 
-func Decode (data []byte) (res Any, err error) {
+func Decode (data []byte) (res Value, err error) {
     var t, e = FirstType(data)
 
     if e != nil { return nil, errors.New("type error:" + e.Error()) }

@@ -36,7 +36,7 @@ func (key *PubKey1) Encode (enc Encoding) []byte {
     return Wrap(enc, PUBKEY1, Join(E, N))
 }
 
-func decodePubKey1 (data []byte) (res Any, err error) { return DecodePubKey1(data) }
+func decodePubKey1 (data []byte) (res Value, err error) { return DecodePubKey1(data) }
 func DecodePubKey1 (data []byte) (res *PubKey1, err error) {
     E, n := ReadVarint(data); data = data[n:]
     if n == 0 { return nil, errors.New("ran out of bytes while parsing PubKey1.E") }

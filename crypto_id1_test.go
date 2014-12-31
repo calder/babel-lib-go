@@ -16,7 +16,7 @@ func TestId1Encoding (T *testing.T) {
         key := randId1()
         encoded := key.Encode(TYPE)
         decoded, err := Decode(encoded)
-        if err == nil && !key.EqualAny(decoded) {
+        if err == nil && !key.EqualValue(decoded) {
             err = errors.New("decoded key != original")
         }
         if err != nil {

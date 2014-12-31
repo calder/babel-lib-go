@@ -38,7 +38,7 @@ func (id *Id1) Encode (enc Encoding) []byte {
     return Wrap(enc, ID1, id.Data())
 }
 
-func decodeId1 (data []byte) (res Any, err error) { return DecodeId1(data) }
+func decodeId1 (data []byte) (res Value, err error) { return DecodeId1(data) }
 func DecodeId1 (data []byte) (res *Id1, err error) {
     if len(data) != 16 {
         return nil, errors.New("invalid length for Id1: "+strconv.Itoa(len(data)))
@@ -50,7 +50,7 @@ func (id *Id1) Equal (other *Id1) bool {
     return bytes.Equal(id.Data(), other.Data())
 }
 
-func (id *Id1) EqualAny (other Any) bool {
+func (id *Id1) EqualValue (other Value) bool {
     switch other := other.(type) {
         case *Id1: return id.Equal(other)
         default: return false

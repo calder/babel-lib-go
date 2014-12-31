@@ -53,7 +53,7 @@ func (key *PriKey1) Encode (enc Encoding) []byte {
     return Wrap(enc, PRIKEY1, Join(numPrimes, Join(primes...), d, e))
 }
 
-func decodePriKey1 (data []byte) (res Any, err error) { return DecodePriKey1(data) }
+func decodePriKey1 (data []byte) (res Value, err error) { return DecodePriKey1(data) }
 func DecodePriKey1 (data []byte) (res *PriKey1, err error) {
     x, n := ReadVarint(data); data = data[n:]
     if n == 0 { return nil, errors.New("error parsing number of primes") }

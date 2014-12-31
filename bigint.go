@@ -31,7 +31,7 @@ func (x *BigInt) Encode (enc Encoding) []byte {
     return Wrap(enc, BIGINT, x.Data.Bytes())
 }
 
-func decodeBigInt (data []byte) (res Any, err error) { return DecodeBigInt(data) }
+func decodeBigInt (data []byte) (res Value, err error) { return DecodeBigInt(data) }
 func DecodeBigInt (data []byte) (res *BigInt, err error) {
     x := NewBigInt(big.NewInt(0))
     x.Data.SetBytes(data)
@@ -51,7 +51,7 @@ func (x *BigInt) Equal (other *BigInt) bool {
     return x.Data.Cmp(other.Data) == 0
 }
 
-func (x *BigInt) EqualAny (other Any) bool {
+func (x *BigInt) EqualValue (other Value) bool {
     switch other := other.(type) {
         case *BigInt: return x.Equal(other)
         default: return false

@@ -31,7 +31,7 @@ func (x *Int32) Encode (enc Encoding) []byte {
     return Wrap(enc, INT32, buf.Bytes())
 }
 
-func DecodeInt32 (data []byte) (res Any, err error) {
+func DecodeInt32 (data []byte) (res Value, err error) {
     x, n, e := ReadInt32(data)
     if e != nil { return nil, e }
     if n < len(data) { return nil, errors.New("leftover bytes after parsing int32") }
@@ -49,7 +49,7 @@ func (x *Int32) Equal (other *Int32) bool {
     return x.Data == other.Data
 }
 
-func (x *Int32) EqualAny (other Any) bool {
+func (x *Int32) EqualValue (other Value) bool {
     switch other := other.(type) {
         case *Int32: return x.Equal(other)
         default: return false
