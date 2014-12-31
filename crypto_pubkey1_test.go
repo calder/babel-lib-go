@@ -7,7 +7,7 @@ import "errors"
 import "testing"
 
 func TestPubKey1Encoding (T *testing.T) {
-    pri     := RandPriKey1()
+    pri     := NewPriKey1(rsa2048PrivateKey)
     pub1    := pri.Pub()
     encoded := pub1.Encode(RAW)
     pub2, e := DecodePubKey1(encoded)
@@ -26,7 +26,7 @@ func TestPubKey1Encoding (T *testing.T) {
 }
 
 func TestPubKey1Encryption (T *testing.T) {
-    pri := RandPriKey1()
+    pri := NewPriKey1(rsa2048PrivateKey)
     pub := pri.Pub()
 
     message := make([]byte, 1024)

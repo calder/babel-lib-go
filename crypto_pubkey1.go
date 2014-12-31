@@ -96,6 +96,5 @@ func (key *PubKey1) Encrypt (plainText []byte) []byte {
     cipherText = append(iv, cipherText...)
 
     // Encode the message
-    println(len(cipherKey))
     return Join(cipherKey, cipherText)
 }

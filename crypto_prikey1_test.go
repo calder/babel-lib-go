@@ -5,7 +5,7 @@ import "errors"
 import "testing"
 
 func TestPriKey1Encoding (T *testing.T) {
-    pri1    := RandPriKey1()
+    pri1    := NewPriKey1(rsa2048PrivateKey)
     encoded := pri1.Encode(RAW)
     pri2, e := DecodePriKey1(encoded)
 
