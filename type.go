@@ -4,6 +4,7 @@ package babel
 
 import "crypto/rand"
 import "encoding/hex"
+import "strings"
 import "code.google.com/p/goprotobuf/proto"
 
 func Type (s string) uint64 {
@@ -15,7 +16,7 @@ func Type (s string) uint64 {
 }
 
 func TypeHex (t uint64) string {
-    return hex.EncodeToString(proto.EncodeVarint(t))
+    return strings.ToUpper(hex.EncodeToString(proto.EncodeVarint(t)))
 }
 
 func RandType (length int) uint64 {

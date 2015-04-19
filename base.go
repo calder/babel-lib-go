@@ -33,13 +33,19 @@ func Join (args ...[]byte) []byte {
     return bytes.Join(args, []byte{})
 }
 
-type Encoding byte
-const RAW  = Encoding(0)
-const LEN  = Encoding(1 << 0)
-const TYPE = Encoding(1 << 1)
-
+// Prepend a varint length and/or type tag to data.
+//
+// Examples:
+//     Wrap(RAW,      type, data) // Return data
+//     Wrap(TYPE,     type, data) // Return type + data
+//     Wrap(LEN,      type, data) // Return len + data
+//     Wrap(TYPE+LEN, type, data) // Return len + my_type + data
 func Wrap (enc Encoding, typ uint64, data []byte) []byte {
     if enc&TYPE>0 { data = Join(EncodeVarint(typ), data) }
     if enc&LEN>0 { data = Join(EncodeVarint(uint64(len(data))), data) }
     return data
 }
+type Encoding byte
+const RAW  = Encoding(0)
+const LEN  = Encoding(1 << 0)
+const TYPE = Encoding(1 << 1)

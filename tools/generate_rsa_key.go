@@ -12,15 +12,15 @@ func NewRsaPrivateKey (bits int) *rsa.PrivateKey {
     return key
 }
 
-func PrintUsage() {
+func usage() {
     println("Usage: go run generate.go BITS >> FILENAME")
     os.Exit(1)
 }
 
 func main() {
-    if len(os.Args) != 2 { PrintUsage() }
+    if len(os.Args) != 2 { usage() }
     bits, e := strconv.Atoi(os.Args[1])
-    if e != nil { PrintUsage() }
+    if e != nil { usage() }
 
     key := NewRsaPrivateKey(bits)
     bytes := x509.MarshalPKCS1PrivateKey(key)
