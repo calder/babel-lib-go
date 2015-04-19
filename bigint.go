@@ -5,10 +5,9 @@ package babel
 import "errors"
 import "math/big"
 
-var BIGINT_STRING = "8DA78674"
-var BIGINT = NewTypeFromHex(BIGINT_STRING)
-func (*BigInt) Type () *Type { return BIGINT }
-func (*BigInt) StringType () string { return BIGINT_STRING }
+var BIGINT = Type("8DA78674")
+func (*BigInt) Type () uint64 { return BIGINT }
+func (*BigInt) TypeName () string { return "BigInt" }
 func init () { AddType(BIGINT, decodeBigInt) }
 
 type BigInt struct {

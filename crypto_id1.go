@@ -7,10 +7,9 @@ import "encoding/hex"
 import "errors"
 import "strconv"
 
-var ID1_STRING = "F7A98013"
-var ID1 = NewTypeFromHex(ID1_STRING)
-func (*Id1) Type () *Type { return ID1 }
-func (*Id1) StringType () string { return ID1_STRING }
+var ID1 = Type("F7A98013")
+func (*Id1) Type () uint64 { return ID1 }
+func (*Id1) TypeName () string { return "Id1" }
 func init () { AddType(ID1, decodeId1) }
 
 type Id1 struct {

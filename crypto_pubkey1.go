@@ -16,10 +16,9 @@ import "crypto/sha256"
 import "errors"
 import "strconv"
 
-var PUBKEY1_STRING = "D1E8A30F"
-var PUBKEY1 = NewTypeFromHex(PUBKEY1_STRING)
-func (*PubKey1) Type () *Type { return PUBKEY1 }
-func (*PubKey1) StringType () string { return PUBKEY1_STRING }
+var PUBKEY1 = Type("D1E8A30F")
+func (*PubKey1) Type () uint64 { return PUBKEY1 }
+func (*PubKey1) TypeName () string { return "PubKey1" }
 func init () { AddType(PUBKEY1, decodePubKey1) }
 
 type PubKey1 struct {

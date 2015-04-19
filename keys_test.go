@@ -18,5 +18,5 @@ func parseRsaPrivateKey(filename string) *rsa.PrivateKey {
 var rsa2048PrivateKey *rsa.PrivateKey
 
 func init() {
-    rsa2048PrivateKey = parseRsaPrivateKey("test-keys/2048.rsaprivatekey")
+    rsa2048PrivateKey = parseRsaPrivateKey("test_data/2048.rsaprivatekey")
 }

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd "`dirname "$0"`"/..
+
+todot TODO.txt | dot -Tsvg -o TODO.svg

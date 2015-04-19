@@ -7,10 +7,9 @@ import "encoding/binary"
 import "errors"
 import "strconv"
 
-var INT32_STRING = "B5D7B812"
-var INT32 = NewTypeFromHex(INT32_STRING)
-func (*Int32) Type () *Type { return INT32 }
-func (*Int32) StringType () string { return INT32_STRING }
+var INT32 = Type("B5D7B812")
+func (*Int32) Type () uint64 { return INT32 }
+func (*Int32) TypeName () string { return "Int32" }
 func init () { AddType(INT32, DecodeInt32) }
 
 type Int32 struct {

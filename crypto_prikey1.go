@@ -11,10 +11,9 @@ import "errors"
 import "math/big"
 import "strconv"
 
-var PRIKEY1_STRING = "A9BAEF32"
-var PRIKEY1 = NewTypeFromHex(PRIKEY1_STRING)
-func (*PriKey1) Type () *Type { return PRIKEY1 }
-func (*PriKey1) StringType () string { return PRIKEY1_STRING }
+var PRIKEY1 = Type("A9BAEF32")
+func (*PriKey1) Type () uint64 { return PRIKEY1 }
+func (*PriKey1) TypeName () string { return "PriKey1" }
 func init () { AddType(PRIKEY1, decodePriKey1) }
 
 type PriKey1 struct {

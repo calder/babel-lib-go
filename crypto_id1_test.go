@@ -13,17 +13,17 @@ func randId1 () *Id1 {
 
 func TestId1Encoding (T *testing.T) {
     for i := 0; i < 100; i++ {
-        key := randId1()
-        encoded := key.Encode(TYPE)
-        decoded, err := Decode(encoded)
-        if err == nil && !key.EqualValue(decoded) {
-            err = errors.New("decoded key != original")
+        id := randId1()
+        encoded := id.Encode(RAW)
+        decoded, err := DecodeId1(encoded)
+        if err == nil && !id.EqualValue(decoded) {
+            err = errors.New("decoded id != original")
         }
         if err != nil {
-            T.Log("Error:  ", err)
-            T.Log("Key:    ", key)
-            T.Log("Encoded:", hex.EncodeToString(encoded))
-            T.Log("Decoded:", decoded)
+            T.Log("Error:   ", err)
+            T.Log("Original:", id)
+            T.Log("Encoded: ", hex.EncodeToString(encoded))
+            T.Log("Decoded: ", decoded)
             T.FailNow()
         }
     }
