@@ -2,7 +2,6 @@
 
 package babel
 
-import "errors"
 import "math/big"
 
 var BIGINT = Type("8DA78674")
@@ -37,13 +36,11 @@ func DecodeBigInt (data []byte) (res *BigInt, err error) {
     return x, nil
 }
 
-func ReadBigInt (data []byte) (res *BigInt, n int, err error) {
-    l, ll := ReadVarint(data)
-    if ll == 0 { return nil, 0, errors.New("ran out of bytes while parsing length") }
-    end := ll + int(l)
-    if end > len(data) { return nil, 0, errors.New("ran out of bytes while parsing BIGINT") }
-    res, err = DecodeBigInt(data[ll:end])
-    return res, end, err
+func ReadBigInt (bytes []byte) (res *BigInt, n int, err error) {
+    _, data, n, err := Unwrap(LEN, bytes)
+    if err != nil { return nil, 0, err }
+    res, err = DecodeBigInt(data)
+    return res, n, err
 }
 
 func (x *BigInt) Equal (other *BigInt) bool {
