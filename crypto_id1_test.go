@@ -6,7 +6,7 @@ import "errors"
 import "testing"
 
 func randId1 () *Id1 {
-    data := [16]byte{}
+    data := [14]byte{}
     rand.Read(data[:])
     return &Id1{data}
 }

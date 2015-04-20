@@ -24,6 +24,10 @@ func (x *Int32) String () string {
     return "<Int32:"+strconv.Itoa(int(x.Data))+">"
 }
 
+func (x *Int32) CBR () []byte {
+    return x.Encode(TYPE)
+}
+
 func (x *Int32) Encode (enc Encoding) []byte {
     buf := new(bytes.Buffer)
     binary.Write(buf, binary.LittleEndian, x.Data)

@@ -1,3 +1,3 @@
 package babel
 
-var NIL = uint64(0)
+var NIL = Type("00")

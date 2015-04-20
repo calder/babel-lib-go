@@ -29,6 +29,10 @@ func (key *PubKey1) String () string {
     return "<PubKey1:"+key.Key.N.String()+","+strconv.Itoa(key.Key.E)+">"
 }
 
+func (key *PubKey1) CBR () []byte {
+    return key.Encode(TYPE)
+}
+
 func (key *PubKey1) Encode (enc Encoding) []byte {
     E := EncodeVarint(uint64(key.Key.E))
     N := NewBigInt(key.Key.N).Encode(RAW)

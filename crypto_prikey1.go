@@ -38,6 +38,10 @@ func (key *PriKey1) String () string {
     return s
 }
 
+func (key *PriKey1) CBR () []byte {
+    return key.Encode(TYPE)
+}
+
 func (key *PriKey1) Encode (enc Encoding) []byte {
     numPrimes := EncodeVarint(uint64(len(key.Key.Primes)))
 

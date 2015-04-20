@@ -25,6 +25,10 @@ func (x *BigInt) RawString () string {
     return x.Data.String()
 }
 
+func (x *BigInt) CBR () []byte {
+    return x.Encode(TYPE)
+}
+
 func (x *BigInt) Encode (enc Encoding) []byte {
     return Wrap(enc, BIGINT, x.Data.Bytes())
 }

@@ -4,6 +4,7 @@ import "bytes"
 import "errors"
 
 type Value interface {
+    CBR () []byte
     Type () uint64
     TypeName () string
 }
