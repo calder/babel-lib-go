@@ -101,7 +101,7 @@ func (key *PriKey1) Equal (other *PriKey1) bool {
     return true
 }
 
-func (key *PriKey1) Id1 () *Id1 {
+func (key *PriKey1) Id1 () *Hash1 {
     return key.Pub().Id1()
 }
 

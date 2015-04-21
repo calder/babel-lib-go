@@ -5,17 +5,17 @@ import "encoding/hex"
 import "errors"
 import "testing"
 
-func randId1 () *Id1 {
-    data := [14]byte{}
+func randHash1 () *Hash1 {
+    data := [28]byte{}
     rand.Read(data[:])
-    return &Id1{data}
+    return NewHash1(data[:])
 }
 
-func TestId1Encoding (T *testing.T) {
+func TestHash1Encoding (T *testing.T) {
     for i := 0; i < 100; i++ {
-        id := randId1()
+        id := randHash1()
         encoded := id.Encode(RAW)
-        decoded, err := DecodeId1(encoded)
+        decoded, err := DecodeHash1(encoded)
         if err == nil && !id.EqualValue(decoded) {
             err = errors.New("decoded id != original")
         }

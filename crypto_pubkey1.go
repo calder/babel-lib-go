@@ -12,7 +12,6 @@ import "crypto/cipher"
 import "crypto/rand"
 import "crypto/rsa"
 import "crypto/sha1"
-import "crypto/sha256"
 import "errors"
 import "strconv"
 
@@ -63,10 +62,8 @@ func (key *PubKey1) Equal (other *PubKey1) bool {
     return true
 }
 
-func (key *PubKey1) Id1 () *Id1 {
-    hash := sha256.New()
-    hash.Write(key.Encode(TYPE))
-    return NewId1(hash.Sum([]byte{})[:16])
+func (key *PubKey1) Id1 () *Hash1 {
+    return Hash1OfValue(key)
 }
 
 func (key *PubKey1) Encrypt (plainText []byte) []byte {
