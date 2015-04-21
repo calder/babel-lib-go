@@ -9,10 +9,10 @@ import "encoding/hex"
 import "errors"
 import "strconv"
 
-var ID1 = Type("F3C8AF31")
-func (*Hash1) Type () uint64 { return ID1 }
+var HASH1 = Type("F3C8AF31")
+func (*Hash1) Type () uint64 { return HASH1 }
 func (*Hash1) TypeName () string { return "Hash1" }
-func init () { AddType(ID1, decodeHash1) }
+func init () { AddType(HASH1, decodeHash1) }
 
 type Hash1 struct {
     data [28]byte
@@ -49,7 +49,7 @@ func (h *Hash1) CBR () []byte {
 }
 
 func (h *Hash1) Encode (enc Encoding) []byte {
-    return Wrap(enc, ID1, h.Data())
+    return Wrap(enc, HASH1, h.Data())
 }
 
 func decodeHash1 (data []byte) (res Value, err error) { return DecodeHash1(data) }
