@@ -1,17 +1,10 @@
-root = Allow Alice to send Bob an encrypted, asynchronously delivered message [new]
-
-send-message = Allow Alice to send messages to a router [done]
-retrieve-message = Allow Bob to retrieve messages from the router [new]
-subscribe-message = Allow Bob to listen for new messages delivered to the router [new]
-
-key1-encrypt = PubKey1s encryption [done]
-key1-decrypt = PriKey1s descryption [done]
-pubkey1-encoding = PubKey1 serialization [done]
-prikey1-encoding = PriKey1 serialization [done]
-bigint-encoding = BigInt serialization [done]
-varint-encoding = VarInt serialization [done]
-
-bigint-encoding > varint-encoding
-root > send-message
-root > retrieve-message
-root > subscribe-message
+Allow Alice to send Bob an encrypted, asynchronously delivered message
+  Allow Alice to send messages to a router
+  Allow Bob to retrieve messages from the router
+  Allow Bob to listen for new messages delivered to the router
+PubKey1 encryption
+PriKey1 descryption
+PubKey1 serialization
+PriKey1 serialization
+BigInt serialization
+  VarInt serialization
