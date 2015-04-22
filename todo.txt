@@ -1,10 +1,3 @@
 Allow Alice to send Bob an encrypted, asynchronously delivered message
-  Allow Alice to send messages to a router
   Allow Bob to retrieve messages from the router
   Allow Bob to listen for new messages delivered to the router
-PubKey1 encryption
-PriKey1 descryption
-PubKey1 serialization
-PriKey1 serialization
-BigInt serialization
-  VarInt serialization
