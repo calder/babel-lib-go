@@ -52,8 +52,8 @@ func (h *Hash1) Encode (enc Encoding) []byte {
     return Wrap(enc, HASH1, h.Data())
 }
 
-func decodeHash1 (data []byte) (res Value, err error) { return DecodeHash1(data) }
-func DecodeHash1 (data []byte) (res *Hash1, err error) {
+func decodeHash1 (data []byte) (Value, error) { return DecodeHash1(data) }
+func DecodeHash1 (data []byte) (*Hash1, error) {
     if len(data) != 28 {
         return nil, errors.New("invalid length for Hash1: "+strconv.Itoa(len(data)))
     }

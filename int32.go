@@ -1,4 +1,4 @@
-// An Int32 is a signed, little endian, 32 bit integer.
+// An Int32 is a signed, big endian, 32 bit integer.
 
 package babel
 
@@ -30,7 +30,7 @@ func (x *Int32) CBR () []byte {
 
 func (x *Int32) Encode (enc Encoding) []byte {
     buf := new(bytes.Buffer)
-    binary.Write(buf, binary.LittleEndian, x.Data)
+    binary.Write(buf, binary.BigEndian, x.Data)
     return Wrap(enc, INT32, buf.Bytes())
 }
 
@@ -43,7 +43,7 @@ func DecodeInt32 (data []byte) (res Value, err error) {
 
 func ReadInt32 (data []byte) (res *Int32, n int, err error) {
     x := new(Int32)
-    e := binary.Read(bytes.NewReader(data[:4]), binary.LittleEndian, &x.Data)
+    e := binary.Read(bytes.NewReader(data[:4]), binary.BigEndian, &x.Data)
     if e != nil { return nil, 0, e }
     return x, 4, nil
 }

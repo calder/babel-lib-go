@@ -1,0 +1,29 @@
+Int32 = Byte[4]
+Int64 = Byte[8]
+BigInt = Byte[]
+
+@Tag "00"
+Nil = Void
+
+@Tag "01"
+Blob = Byte[]
+
+@Tag "02"
+True = Void
+
+@Tag "03"
+False = Void
+
+@Tag "8DA78674"
+Hash1 = Byte[28]
+
+@Tag "A9BAEF32"
+PriKey1 =
+  primes: BigInt[]
+  d: BigInt
+  e: BigInt
+
+@Tag "D1E8A30F"
+PubKey1 =
+  n: BigInt
+  e: BigInt
